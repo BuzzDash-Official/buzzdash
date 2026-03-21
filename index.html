@@ -3,208 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuzzDash | Final Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&display=swap" rel="stylesheet">
+    <title>POPCORN STREAM | Cinéma & Docs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --accent: #007bff; --bg: #000; --side: #080808; --text: #fff; --border: #1a1a1a; --card: #111; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        :root { --bg-color: #050505; --text-color: white; --accent: #facc15; --sidebar-bg: rgba(255,255,255,0.03); }
+        .light-mode { --bg-color: #f5f5f5; --text-color: #1a1a1a; --accent: #eab308; --sidebar-bg: rgba(0,0,0,0.03); }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            transition: all 0.5s ease;
+            font-family: 'Inter', sans-serif;
+            margin: 0; overflow-x: hidden;
+        }
+
+        /* --- INTRO STUDIO --- */
+        #studio-intro {
+            position: fixed; inset: 0; z-index: 1000;
+            background: radial-gradient(circle, #111 0%, #000 100%);
+            display: flex; justify-content: center; align-items: center;
+            animation: studioFadeOut 0.8s ease forwards 4.5s;
+        }
+        .studio-wrapper { display: flex; align-items: center; gap: 30px; }
+        .popcorn-mascot { position: relative; display: flex; justify-content: center; align-items: center; animation: swirlScale 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        .pop-emoji { font-size: 150px; filter: drop-shadow(0 0 30px rgba(250, 204, 21, 0.4)); }
+        .packaging-eye { position: absolute; font-size: 55px; top: 50%; left: 50%; transform: translate(-50%, -10%); opacity: 0; animation: eyeAppear 0.5s ease forwards 2.6s, blink 0.3s infinite 4s; }
+        .studio-name { font-family: 'Syncopate', sans-serif; font-size: 55px; font-weight: 700; color: var(--accent); text-transform: uppercase; opacity: 0; transform: translateX(-50px); filter: blur(10px); animation: textReveal 1.5s ease-out forwards 2.8s; }
+
+        @keyframes swirlScale { 0% { transform: rotate(-180deg) scale(0); opacity: 0; } 100% { transform: rotate(0deg) scale(1); opacity: 1; } }
+        @keyframes eyeAppear { to { opacity: 1; transform: translate(-50%, -10%) scale(1); } }
+        @keyframes blink { 0%, 90%, 100% { transform: translate(-50%, -10%) scaleY(1); } 95% { transform: translate(-50%, -10%) scaleY(0); } }
+        @keyframes textReveal { to { opacity: 1; transform: translateX(0); filter: blur(0); } }
+        @keyframes studioFadeOut { to { opacity: 0; visibility: hidden; } }
+
+        /* --- UI --- */
+        .sidebar { width: 280px; height: 100vh; position: fixed; left: 0; top: 0; padding: 40px 20px; border-right: 1px solid rgba(255,255,255,0.05); background: var(--sidebar-bg); z-index: 200; }
+        .main-content { margin-left: 280px; padding: 100px 50px; opacity: 0; animation: fadeInMain 1s ease forwards 4.8s; }
+        .top-bar { position: fixed; top: 0; left: 280px; right: 0; height: 80px; display: flex; align-items: center; padding: 0 50px; background: var(--bg-color); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        /* SIDEBAR */
-        .sidebar { width: 250px; background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-top: 80px; z-index: 1001; }
-        .filter-label { padding: 15px 25px 5px; font-size: 11px; color: #555; font-weight: bold; text-transform: uppercase; }
-        .side-item { padding: 10px 25px; cursor: pointer; color: #888; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-        .side-item.active { color: var(--accent); font-weight: bold; }
-        .dot { width: 8px; height: 8px; border: 2px solid #333; border-radius: 50%; }
-        .active .dot { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent); }
+        #settings-panel { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; background: rgba(255,255,255,0.03); border-radius: 10px; margin-top: 10px; }
+        #settings-panel.open { max-height: 200px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* NAV */
-        .nav { height: 70px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; border-bottom: 1px solid var(--border); padding: 0 30px; }
-        .search-area { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 600px; margin: 0 20px; }
-        .search-bar { flex: 1; background: #111; border: 1px solid var(--border); padding: 10px 15px; border-radius: 20px; color: white; outline: none; }
-        .select-ui { background: #111; border: 1px solid var(--border); color: #fff; padding: 8px; border-radius: 12px; font-size: 12px; cursor: pointer; }
+        .movie-card { background: rgba(255,255,255,0.02); border-radius: 15px; overflow: hidden; transition: 0.4s; border: 1px solid rgba(255,255,255,0.03); cursor: pointer; }
+        .movie-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        /* CONTENT */
-        #main-content { flex: 1; margin-top: 70px; overflow-y: auto; position: relative; height: calc(100vh - 70px); }
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
-        .v-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
-        .v-card:hover { border-color: var(--accent); transform: translateY(-3px); }
-        .thumb { width: 100%; aspect-ratio: 16/9; background-size: cover; background-position: center; }
-        .v-title { padding: 10px; font-size: 13px; font-weight: bold; height: 35px; overflow: hidden; }
+        /* --- PLAYER MODAL --- */
+        #player-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        #player-modal.open { display: flex; }
+        .player-container { width: 80%; max-width: 1000px; aspect-video: 16/9; background: black; border: 5px solid white; box-shadow: 0 0 100px rgba(255,255,255,0.2); }
 
-        /* SHORTS */
-        #shorts-area { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; display: none; }
-        #shorts-area::-webkit-scrollbar { display: none; }
-        .short-slide { height: 100%; display: flex; justify-content: center; align-items: center; scroll-snap-align: start; }
-        .short-box { height: 85vh; aspect-ratio: 9/16; background: #000; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); }
-
-        /* UI ELEMENTS */
-        .btn-group { display: flex; gap: 5px; background: #111; padding: 5px; border-radius: 30px; }
-        .btn { background: transparent; border: none; color: #888; padding: 8px 15px; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .btn.active { background: var(--accent); color: white; }
-        .arrows { position: fixed; right: 20px; top: 50%; display: none; flex-direction: column; gap: 10px; }
-        .arrow { background: #111; border: 1px solid var(--border); color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
-
-        #player-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        #player-iframe { width: 85%; aspect-ratio: 16/9; max-width: 1000px; border: 1px solid var(--accent); }
+        @keyframes fadeInMain { to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="nav">
-        <div style="font-weight:900; color:var(--accent); font-size:22px;">BUZZDASH</div>
-        <div class="search-area">
-            <select id="ageSelect" class="select-ui" onchange="load()">
-                <option value="all">👶Âge: Tous</option>
-                <option value="kids">🧒 5-12 ans</option>
-                <option value="teens">👦 13-18 ans</option>
-                <option value="adults">🧔 18-30 ans</option>
-            </select>
-            <select id="countrySelect" class="select-ui" onchange="load()">
-                <option value="FR">🇫🇷 France</option>
-                <option value="US">🇺🇸 USA</option>
-                <option value="UA">🇺🇦 Ukraine</option>
-            </select>
-            <input type="text" id="searchInput" class="search-bar" placeholder="Rechercher..." onkeypress="if(event.key==='Enter')load(this.value)">
-        </div>
-        <div class="btn-group">
-            <button id="b-long" class="btn active" onclick="switchType('long')">Vidéos</button>
-            <button id="b-short" class="btn" onclick="switchType('short')">Shorts</button>
+    <div id="studio-intro">
+        <div class="studio-wrapper">
+            <div class="popcorn-mascot">
+                <div class="pop-emoji">🍿</div>
+                <div class="packaging-eye">👁️</div>
+            </div>
+            <div class="studio-name">Popcorn<br><span style="color:white">Stream</span></div>
         </div>
     </div>
 
-    <div class="sidebar">
-        <div class="filter-label">THERMOMÈTRE</div>
-        <div id="f-pop" class="side-item active" onclick="setPop('pop')"><span>🔥 Populaires</span> <div class="dot"></div></div>
-        <div id="f-froid" class="side-item" onclick="setPop('froid')"><span>🧊 Froid</span> <div class="dot"></div></div>
-        
-        <div class="filter-label">FILTRES (CUMULABLES)</div>
-        <div id="f-gaming" class="side-item" onclick="toggleCat('gaming')"><span>🎮 Jeux Vidéo</span> <div class="dot"></div></div>
-        <div id="f-live" class="side-item" onclick="toggleCat('live')"><span>🔴 Directs</span> <div class="dot"></div></div>
+    <aside class="sidebar">
+        <div class="text-2xl font-black text-yellow-500 mb-10 tracking-tighter italic">POPCORN STREAM</div>
+        <nav class="space-y-3 font-semibold text-gray-400">
+            <button onclick="changeCategory('films complets gratuits')" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-yellow-500 hover:text-black hover:font-bold transition"><span>🔥</span> <span>À la Une</span></button>
+            <button onclick="changeCategory('film action complet français')" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-yellow-500 hover:text-black hover:font-bold transition"><span>🎬</span> <span>Action</span></button>
+            <button onclick="changeCategory('film comedie complet français')" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-yellow-500 hover:text-black hover:font-bold transition"><span>😂</span> <span>Comédie</span></button>
+            <button onclick="changeCategory('film pour adolescent complet')" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-yellow-500 hover:text-black hover:font-bold transition"><span>🍿</span> <span>Pour Ados</span></button>
+            <button onclick="changeCategory('documentaire complet français')" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-yellow-500 hover:text-black hover:font-bold transition"><span>🌍</span> <span>Documentaires</span></button>
+            
+            <hr class="border-white/10 my-6">
+            
+            <button onclick="toggleSettings()" class="w-full flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition">
+                <span class="flex items-center space-x-3"><span>⚙️</span> <span>Paramètres</span></span>
+                <span id="arrow">▾</span>
+            </button>
+            
+            <div id="settings-panel">
+                <div class="space-y-4 text-sm">
+                    <div class="flex justify-between items-center">
+                        <span>Lumière :</span>
+                        <button onclick="document.body.classList.toggle('light-mode')" class="bg-yellow-500 text-black px-2 py-1 rounded text-[10px] font-bold">ON / OFF</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </aside>
 
-        <div style="margin-top:auto; padding:20px; border-top:1px solid var(--border);">
-            <label style="font-size:12px; color:#555;"><input type="checkbox" id="p-son"> Son Auto</label>
+    <header class="top-bar">
+        <div class="w-2/3 relative">
+            <span class="absolute left-5 top-4 opacity-30">🔍</span>
+            <input type="text" id="search-input" placeholder="Rechercher un film, un doc, Kaizen..." 
+                   class="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-3.5 outline-none focus:border-yellow-500 transition">
         </div>
+    </header>
+
+    <main class="main-content">
+        <div class="mb-10">
+            <h2 id="category-title" class="text-4xl font-black italic uppercase tracking-tight">À LA UNE</h2>
+            <p class="text-gray-500">Le meilleur du cinéma gratuit sélectionné sur YouTube.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="movie-grid">
+            <p class="text-gray-600 col-span-4 text-center py-20">Chargement des projecteurs...</p>
+        </div>
+    </main>
+
+    <div id="player-modal">
+        <button onclick="closePlayer()" class="absolute top-10 right-10 text-5xl text-white opacity-50 hover:opacity-100 transition">&times;</button>
+        <div class="player-container">
+            <iframe id="yt-player" width="100%" height="100%" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <p class="text-yellow-500 font-mono mt-6 animate-pulse">Bonne séance sur Popcorn Stream 🍿</p>
     </div>
 
-    <div class="arrows" id="nav-arrows">
-        <button class="arrow" onclick="navMove(-1)">↑</button>
-        <button class="arrow" onclick="navMove(1)">↓</button>
-    </div>
+    <script>
+        // --- CONFIGURATION ---
+        const API_KEY = "AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs"; // Ta clé API intégrée !
+        const grid = document.getElementById('movie-grid');
 
-    <div id="main-content">
-        <div id="grid-area" class="video-grid"></div>
-        <div id="shorts-area"></div>
-    </div>
-
-    <div id="player-overlay" onclick="closePlayer()">
-        <iframe id="player-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
-
-<script>
-    const KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs';
-    let type = 'long', pop = 'pop', isGaming = false, isLive = false;
-
-    function setPop(p) {
-        pop = p;
-        document.getElementById('f-pop').classList.toggle('active', p === 'pop');
-        document.getElementById('f-froid').classList.toggle('active', p === 'froid');
-        load();
-    }
-
-    function toggleCat(cat) {
-        if(cat === 'gaming') isGaming = !isGaming;
-        if(cat === 'live') isLive = !isLive;
-        document.getElementById('f-gaming').classList.toggle('active', isGaming);
-        document.getElementById('f-live').classList.toggle('active', isLive);
-        load();
-    }
-
-    function switchType(t) {
-        type = t;
-        document.getElementById('b-long').classList.toggle('active', t === 'long');
-        document.getElementById('b-short').classList.toggle('active', t === 'short');
-        document.getElementById('grid-area').style.display = t === 'long' ? 'grid' : 'none';
-        document.getElementById('shorts-area').style.display = t === 'short' ? 'block' : 'none';
-        document.getElementById('nav-arrows').style.display = t === 'short' ? 'flex' : 'none';
-        load();
-    }
-
-    async function load(query = "") {
-        const country = document.getElementById('countrySelect').value;
-        const age = document.getElementById('ageSelect').value;
-        let order = pop === 'pop' ? "viewCount" : "date";
-        
-        let q = query;
-        if(!q) {
-            if(age === 'kids') q = "dessin animé enfant";
-            else if(age === 'teens') q = "funny entertainment";
-            else if(age === 'adults') q = "actu buzz";
-            else q = "trending";
+        // --- FONCTIONS UI ---
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            const arrow = document.getElementById('arrow');
+            panel.classList.toggle('open');
+            arrow.style.transform = panel.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
         }
-        if(isGaming) q += " gaming";
 
-        let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&regionCode=${country}&relevanceLanguage=${country.toLowerCase()}&type=video&order=${order}&q=${encodeURIComponent(q)}&key=${KEY}`;
-        
-        if(isLive) url += "&eventType=live";
-        if(type === 'short') url += "&videoDuration=short";
+        function playMovie(videoId) {
+            const modal = document.getElementById('player-modal');
+            const player = document.getElementById('yt-player');
+            player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0`;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden'; // Empêche le scroll derrière
+        }
 
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
-            render(data.items);
-        } catch(e) { console.error("Erreur API"); }
-    }
+        function closePlayer() {
+            const modal = document.getElementById('player-modal');
+            const player = document.getElementById('yt-player');
+            player.src = ""; // Arrête la vidéo
+            modal.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
 
-    function render(items) {
-        const grid = document.getElementById('grid-area');
-        const shorts = document.getElementById('shorts-area');
-        grid.innerHTML = ''; shorts.innerHTML = '';
+        // --- LOGIQUE API YOUTUBE ---
+        async function fetchMovies(query, title = "Résultats") {
+            document.getElementById('category-title').innerText = title;
+            grid.innerHTML = '<p class="text-gray-600 col-span-4 text-center py-20">Recherche dans les archives...</p>';
 
-        items.forEach(item => {
-            const id = item.id.videoId;
-            const v = item.snippet;
-            if(!id) return;
+            // On cherche des vidéos 'longues' (+20min) pour avoir de vrais films/docs
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=16&q=${encodeURIComponent(query)}&type=video&videoDuration=long&key=${API_KEY}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    displayMovies(data.items);
+                } else {
+                    grid.innerHTML = '<p class="text-gray-500 col-span-4 text-center py-20">Aucun film trouvé pour cette catégorie. Tentez une autre recherche !</p>';
+                }
+            } catch (error) {
+                console.error("Erreur API :", error);
+                grid.innerHTML = '<p class="text-red-500 col-span-4 text-center py-20">Erreur lors du chargement. Vérifiez votre clé API.</p>';
+            }
+        }
 
-            if(type === 'long') {
-                grid.innerHTML += `<div class="v-card" onclick="openPlayer('${id}')">
-                    <div class="thumb" style="background-image:url('${v.thumbnails.high.url}')"></div>
-                    <div class="v-title">${v.title}</div>
-                </div>`;
-            } else {
-                shorts.innerHTML += `<div class="short-slide"><div class="short-box">
-                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}?enablejsapi=1&mute=1" frameborder="0"></iframe>
-                </div></div>`;
+        function displayMovies(movies) {
+            grid.innerHTML = ''; // On vide
+
+            movies.forEach(movie => {
+                const videoId = movie.id.videoId;
+                const title = movie.snippet.title;
+                const thumbnail = movie.snippet.thumbnails.high.url;
+                const channel = movie.snippet.channelTitle;
+
+                const html = `
+                    <div class="movie-card group" onclick="playMovie('${videoId}')">
+                        <div class="aspect-video bg-zinc-900 relative">
+                            <img src="${thumbnail}" class="w-full h-full object-cover opacity-80 transition group-hover:opacity-60" alt="${title}">
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/50">
+                                <span class="text-6xl scale-75 group-hover:scale-100 transition">▶️</span>
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-bold text-lg truncate text-white group-hover:text-yellow-500 transition">${title}</h3>
+                            <p class="text-xs text-gray-500 mt-2 uppercase tracking-wider">${channel}</p>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += html;
+            });
+        }
+
+        // Changement de catégorie via Sidebar
+        function changeCategory(query) {
+            const titles = {
+                'films complets gratuits': 'À la Une',
+                'film action complet français': 'Action',
+                'film comedie complet français': 'Comédie',
+                'film pour adolescent complet': 'Pour Ados',
+                'documentaire complet français': 'Documentaires'
+            };
+            fetchMovies(query, titles[query] || 'Résultats');
+        }
+
+        // Barre de recherche
+        document.getElementById('search-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const query = this.value;
+                if (query) {
+                    fetchMovies(query + " complet français", `Recherche : ${query}`);
+                }
             }
         });
-        if(type === 'short') initObs();
-    }
 
-    function initObs() {
-        const obs = new IntersectionObserver((es) => {
-            es.forEach(e => {
-                const ifr = e.target.querySelector('iframe');
-                if(ifr) ifr.contentWindow.postMessage(`{"event":"command","func":"${e.isIntersecting?'playVideo':'pauseVideo'}","args":""}`, '*');
-            });
-        }, { threshold: 0.8 });
-        document.querySelectorAll('.short-slide').forEach(s => obs.observe(s));
-    }
+        // --- CHARGEMENT INITIAL ---
+        // On attend que l'intro studio soit finie pour charger les films (pour ne pas ralentir l'animation)
+        setTimeout(() => {
+            fetchMovies('films complets gratuits', 'À la Une');
+        }, 4000);
 
-    function openPlayer(id) {
-        document.getElementById('player-iframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-        document.getElementById('player-overlay').style.display = 'flex';
-    }
-
-    function closePlayer() {
-        document.getElementById('player-overlay').style.display = 'none';
-        document.getElementById('player-iframe').src = '';
-    }
-
-    function navMove(d) {
-        const s = document.getElementById('shorts-area');
-        s.scrollBy({ top: d * window.innerHeight, behavior: 'smooth' });
-    }
-
-    load();
-</script>
+    </script>
 </body>
 </html>
