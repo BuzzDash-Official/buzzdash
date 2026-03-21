@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuzzDash | Ultimate Trends</title>
+    <title>BuzzDash | Ultimate Control</title>
     
     <meta name="google-adsense-account" content="ca-pub-4636323611777367">
 
@@ -15,21 +15,20 @@
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; display: flex; transition: 0.3s; height: 100vh; overflow: hidden; }
         
         .sidebar { width: 240px; background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-top: 80px; z-index: 1001; flex-shrink: 0; }
-        .side-item { padding: 12px 25px; cursor: pointer; color: #888; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-size: 14px; }
-        .side-item:hover { color: var(--accent); background: rgba(0,123,255,0.05); }
-        .side-item.active { border-left: 4px solid var(--accent); color: var(--accent); background: rgba(0,123,255,0.1); }
-        .filter-label { padding: 20px 25px 5px; font-size: 11px; color: #555; font-weight: bold; text-transform: uppercase; }
+        .side-item { padding: 10px 25px; cursor: pointer; color: #888; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+        .side-item:hover { color: var(--accent); }
+        .side-item.active { color: var(--accent); font-weight: bold; }
+        
+        .dot { width: 10px; height: 10px; border: 2px solid #444; border-radius: 50%; display: inline-block; }
+        .active .dot { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent); }
 
-        .settings-header { padding: 15px 25px; cursor: pointer; border-top: 1px solid var(--border); margin-top: auto; color: #aaa; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; }
-        .settings-content { max-height: 0; overflow: hidden; transition: 0.3s; background: rgba(0,0,0,0.2); }
-        .settings-content.open { max-height: 150px; }
-        .set-row { padding: 10px 25px; display: flex; justify-content: space-between; font-size: 12px; }
+        .filter-label { padding: 20px 25px 5px; font-size: 11px; color: #555; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
         .nav { height: 70px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; border-bottom: 1px solid var(--border); padding: 0 30px; }
         .logo { font-weight: 900; color: var(--accent); font-size: 24px; text-shadow: 0 0 10px var(--accent); }
         .search-area { display: flex; align-items: center; flex: 1; max-width: 500px; margin: 0 20px; gap: 10px; }
         .search-bar { flex: 1; background: #111; border: 1px solid var(--border); padding: 10px 15px; border-radius: 20px; color: white; outline: none; }
-        .country-select { background: #111; border: 1px solid var(--border); color: #fff; padding: 8px; border-radius: 15px; font-size: 12px; cursor: pointer; }
+        .country-select { background: #111; border: 1px solid var(--border); color: #fff; padding: 8px; border-radius: 15px; font-size: 12px; }
 
         .btn-group { display: flex; gap: 5px; background: rgba(128,128,128,0.1); padding: 5px; border-radius: 30px; border: 1px solid var(--border); }
         .btn { background: transparent; border: none; color: #888; padding: 8px 18px; border-radius: 30px; cursor: pointer; font-weight: bold; }
@@ -40,7 +39,7 @@
         .ad-top-grid { height: 90px; width: calc(100% - 30px); }
 
         .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 15px 30px 30px; }
-        .v-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .v-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; position: relative; }
         .v-card:hover { transform: translateY(-5px); border-color: var(--accent); }
         .thumb { width: 100%; aspect-ratio: 16/9; background-size: cover; background-position: center; }
         .v-meta { padding: 12px; }
@@ -57,6 +56,9 @@
         #player-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .close-player { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; }
         #player-iframe { width: 85%; aspect-ratio: 16/9; max-width: 1100px; border: 1px solid var(--accent); }
+
+        .share-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; padding: 5px 10px; border-radius: 10px; font-size: 10px; cursor: pointer; opacity: 0; transition: 0.3s; }
+        .v-card:hover .share-btn { opacity: 1; }
     </style>
 </head>
 <body>
@@ -78,19 +80,21 @@
     </div>
 
     <div class="sidebar">
-        <div class="filter-label">THERMOMÈTRE</div>
-        <div id="f-pop" class="side-item active" onclick="setFilter('pop')">🔥 Populaires</div>
-        <div id="f-neutre" class="side-item" onclick="setFilter('neutre')">⚖️ Neutre</div>
-        <div id="f-froid" class="side-item" onclick="setFilter('froid')">🧊 Froid</div>
+        <div class="filter-label">THERMOMÈTRE BUZZ</div>
+        <div class="side-item active" onclick="setPop('pop', this)"><span>🔥 Populaires</span> <div class="dot"></div></div>
+        <div class="side-item" onclick="setPop('neutre', this)"><span>⚖️ Neutre</span> <div class="dot"></div></div>
+        <div class="side-item" onclick="setPop('froid', this)"><span>🧊 Froid</span> <div class="dot"></div></div>
         
         <div class="filter-label">CATÉGORIES</div>
-        <div id="f-gaming" class="side-item" onclick="setFilter('gaming')">🎮 Gaming</div>
-        <div id="f-live" class="side-item" onclick="setFilter('live')">🔴 Directs</div>
+        <div id="f-all" class="side-item active" onclick="setCat('all', this)"><span>🎬 Tout</span> <div class="dot"></div></div>
+        <div id="f-gaming" class="side-item" onclick="setCat('gaming', this)"><span>🎮 Gaming</span> <div class="dot"></div></div>
+        <div id="f-live" class="side-item" onclick="setCat('live', this)"><span>🔴 Directs</span> <div class="dot"></div></div>
 
-        <div class="settings-header" onclick="document.getElementById('set-panel').classList.toggle('open')">⚙️ OPTIONS <span>▼</span></div>
-        <div id="set-panel" class="settings-content">
-            <div class="set-row"><span>Mode Clair</span> <input type="checkbox" id="p-light" onchange="toggleTheme()"></div>
-            <div class="set-row"><span>Son Auto</span> <input type="checkbox" id="p-son"></div>
+        <div style="margin-top:auto; border-top: 1px solid var(--border); padding: 15px;">
+             <div style="font-size: 11px; color:#555; margin-bottom:10px;">MODE SOMBRE</div>
+             <input type="checkbox" id="p-light" onchange="toggleTheme()"> Mode Clair
+             <br><br>
+             <input type="checkbox" id="p-son"> Son Auto
         </div>
     </div>
 
@@ -113,11 +117,28 @@
 <script>
     const KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs'; 
     let currentType = 'long';
-    let currentFilter = 'pop';
+    let currentPop = 'pop';
+    let currentCat = 'all';
     let currentPos = 0;
 
     function handleSearch(e) { if (e.key === 'Enter') load(e.target.value); }
     function toggleTheme() { document.body.classList.toggle('light-mode', document.getElementById('p-light').checked); }
+
+    function setPop(val, el) {
+        currentPop = val;
+        el.parentElement.querySelectorAll('.side-item').forEach(i => { if(i.innerText.includes('🔥') || i.innerText.includes('⚖️') || i.innerText.includes('🧊')) i.classList.remove('active')});
+        el.classList.add('active');
+        load();
+    }
+
+    function setCat(val, el) {
+        currentCat = val;
+        document.getElementById('f-all').classList.remove('active');
+        document.getElementById('f-gaming').classList.remove('active');
+        document.getElementById('f-live').classList.remove('active');
+        el.classList.add('active');
+        load();
+    }
 
     function switchType(type) {
         currentType = type;
@@ -127,7 +148,6 @@
         document.getElementById('ad-top-grid').style.display = type === 'long' ? 'flex' : 'none';
         document.getElementById('shorts-area').style.display = type === 'short' ? 'block' : 'none';
         document.getElementById('nav-arrows').style.display = type === 'short' ? 'flex' : 'none';
-        currentPos = 0;
         load();
     }
 
@@ -138,30 +158,18 @@
         sa.scrollTo({ top: currentPos, behavior: 'smooth' });
     }
 
-    function setFilter(f) {
-        currentFilter = f;
-        document.querySelectorAll('.side-item').forEach(el => el.classList.remove('active'));
-        document.getElementById(`f-${f}`).classList.add('active');
-        load();
-    }
-
     async function load(query = "") {
         let region = document.getElementById('countrySelect').value;
-        let url = "";
+        let order = "viewCount";
+        if(currentPop === 'froid') order = "date";
+        if(currentPop === 'neutre') order = "relevance";
 
-        // Si recherche manuelle
-        if(query) {
-            url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&regionCode=${region}&type=video&q=${encodeURIComponent(query)}&key=${KEY}`;
-        } 
-        // Si Catégorie Live
-        else if(currentFilter === 'live') {
-            url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&regionCode=${region}&type=video&eventType=live&q=live&key=${KEY}`;
-        }
-        // Si Catégorie Gaming ou Filtre (On utilise le Chart de popularité pour éviter l'Inde)
-        else {
-            let catId = (currentFilter === 'gaming') ? 20 : 0;
-            url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&chart=mostPopular&maxResults=50&regionCode=${region}&videoCategoryId=${catId}&key=${KEY}`;
-        }
+        let q = query || (currentCat === 'gaming' ? "gaming" : "buzz");
+        let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&regionCode=${region}&relevanceLanguage=${region.toLowerCase()}&type=video&order=${order}&q=${encodeURIComponent(q)}&key=${KEY}`;
+        
+        if(currentCat === 'live') url += "&eventType=live";
+        if(currentCat === 'gaming') url += "&videoCategoryId=20";
+        if(currentType === 'short') url += "&videoDuration=short";
 
         try {
             const r = await fetch(url);
@@ -177,10 +185,11 @@
 
         items.forEach(item => {
             const v = item.snippet;
-            const id = item.id.videoId || item.id;
+            const id = item.id.videoId;
             if(currentType === 'long') {
                 grid.innerHTML += `
                     <div class="v-card" onclick="openPlayer('${id}')">
+                        <button class="share-btn" onclick="event.stopPropagation(); alert('Lien copié !')">🔗 Partager</button>
                         <div class="thumb" style="background-image:url('${v.thumbnails.high.url}')"></div>
                         <div class="v-meta"><div class="v-title">${v.title}</div></div>
                     </div>`;
@@ -202,7 +211,6 @@
                 const ifr = entry.target.querySelector('iframe');
                 if (ifr && entry.isIntersecting) {
                     ifr.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                    if(document.getElementById('p-son').checked) ifr.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
                 } else if (ifr) {
                     ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                 }
