@@ -112,4 +112,25 @@
                 entries.forEach(entry => {
                     const iframe = entry.target.querySelector('iframe');
                     if (entry.isIntersecting) {
-                        iframe.contentWindow.postMessage('{"event":"command","
+                        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                    } else {
+                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                        iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
+                    }
+                });
+            }, { threshold: 0.6 });
+            document.querySelectorAll('.slide').forEach(s => observer.observe(s));
+        }, 1000);
+    }
+
+    function changeMode(mode) {
+        currentMode = mode;
+        document.getElementById('b-gaming').classList.toggle('active', mode === 'gaming');
+        document.getElementById('b-shorts').classList.toggle('active', mode === 'shorts');
+        loadContent(mode === 'gaming' ? 20 : 24);
+    }
+
+    loadContent(20);
+</script>
+</body>
+</html>
