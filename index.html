@@ -3,134 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuzzDash - Overlay Edition</title>
+    <title>BuzzDash - Final Design</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #9d00ff; --bg: #000000; --side: #080808; --nav-h: 70px; }
         body { margin: 0; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; display: flex; }
         
-        /* Barre Latérale */
-        .sidebar { width: 220px; height: 100vh; background: var(--side); border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; padding-top: 80px; box-sizing: border-box; }
-        .side-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 15px; color: #888; transition: 0.2s; }
-        .side-item:hover, .side-item.active { background: #111; color: white; }
+        /* Sidebar avec Paramètres */
+        .sidebar { width: 240px; height: 100vh; background: var(--side); border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; padding-top: 80px; z-index: 1001; }
+        .side-item { padding: 15px 25px; cursor: pointer; color: #888; transition: 0.2s; font-size: 15px; }
         .side-item.active { border-left: 4px solid var(--accent); color: var(--accent); }
+        .settings-header { padding: 15px 25px; cursor: pointer; border-top: 1px solid #1a1a1a; margin-top: 20px; color: #aaa; display: flex; justify-content: space-between; font-size: 13px; }
+        .settings-content { max-height: 0; overflow: hidden; transition: 0.3s; background: #050505; }
+        .settings-content.open { max-height: 150px; }
+        .set-row { padding: 10px 25px; display: flex; justify-content: space-between; font-size: 12px; }
 
-        /* Contenu Principal */
-        .main-content { flex: 1; height: 100vh; position: relative; }
-        
-        /* Nav centrée */
-        .nav { height: var(--nav-h); display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); position: fixed; top: 0; left: 220px; right: 0; z-index: 1000; border-bottom: 1px solid #1a1a1a; }
-        .logo-abs { position: absolute; left: 30px; font-weight: 900; color: var(--accent); font-size: 26px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 15px var(--accent); }
-        .btn-group { display: flex; gap: 5px; background: #080808; padding: 5px; border-radius: 30px; border: 1px solid #1a1a1a; }
-        .btn { background: transparent; border: none; color: #666; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; transition: 0.3s; }
-        .btn.active { background: var(--accent); color: white; box-shadow: 0 0 15px var(--accent); }
+        /* Navigation */
+        .nav { height: var(--nav-h); display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.9); position: fixed; top: 0; left: 240px; right: 0; z-index: 1000; border-bottom: 1px solid #1a1a1a; }
+        .logo-abs { position: absolute; left: 30px; font-weight: 900; color: var(--accent); font-size: 24px; text-shadow: 0 0 10px var(--accent); }
+        .btn-group { display: flex; gap: 5px; background: #0a0a0a; padding: 5px; border-radius: 30px; border: 1px solid #222; }
+        .btn { background: transparent; border: none; color: #555; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+        .btn.active { background: var(--accent); color: white; }
 
-        /* Viewport ultra-fluide */
-        #viewport { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; }
+        /* Viewport */
+        #viewport { flex: 1; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; }
         #viewport::-webkit-scrollbar { display: none; }
 
-        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; justify-content: center; align-items: center; position: relative; padding-top: calc(var(--nav-h) + 10px); box-sizing: border-box; }
+        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 40px; }
         
-        /* Conteneur Immersif */
-        .v-container { width: 90%; max-width: 950px; aspect-ratio: 16/9; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #1a1a1a; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .vertical .v-container { max-width: 420px; height: 88vh; aspect-ratio: unset; } 
-        
+        /* Zone Vidéo Agrandie */
+        .v-box { width: 92%; max-width: 1100px; position: relative; }
+        .vertical .v-box { max-width: 450px; }
+
+        .v-card { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #222; }
+        .vertical .v-card { aspect-ratio: 9/16; height: 75vh; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* ZONE D'OVERLAY (Pseudo + Titre) */
-        .v-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); padding: 20px; box-sizing: border-box; }
-        .v-overlay .pseudo { font-weight: 900; font-size: 18px; color: var(--accent); text-shadow: 0 0 10px rgba(157,0,255,0.5); display: inline; }
-        .v-overlay .title { font-weight: 700; font-size: 16px; color: white; display: inline; margin-left: 10px; opacity: 0.9; }
+        /* Barre d'infos sous la vidéo */
+        .v-info-under { width: 100%; margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-start; border: 1px solid #333; padding: 12px; border-radius: 10px; background: #050505; }
+        .pseudo { color: var(--accent); font-weight: 900; font-size: 16px; min-width: 150px; }
+        .title { color: white; font-size: 14px; text-align: right; flex: 1; opacity: 0.8; }
 
-        /* Flèches de navigation */
-        .nav-arrows { position: fixed; right: 30px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 100; }
-        .arrow { background: rgba(255,255,255,0.05); border: 1px solid #222; color: white; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: 0.3s; }
-        .arrow:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px var(--accent); }
+        /* Flèches Navigation */
+        .nav-arrows { position: fixed; right: 25px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; }
+        .arrow { background: #111; border: 1px solid #333; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; }
+        .arrow:hover { background: var(--accent); border-color: var(--accent); }
+
+        @media (max-width: 1000px) { .sidebar { display: none; } .nav { left: 0; } }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <div class="side-item active">🏠 Accueil</div>
+        <div class="settings-header" onclick="document.getElementById('set-content').classList.toggle('open')">⚙️ PARAMÈTRES <span>▼</span></div>
+        <div id="set-content" class="settings-content">
+            <div class="set-row"><span>Son Auto</span> <input type="checkbox" id="p-sound" onchange="saveP()"></div>
+            <div class="set-row"><span>Scroll Auto</span> <input type="checkbox" id="p-scroll" onchange="saveP()"></div>
+        </div>
     </div>
 
     <div class="main-content">
         <div class="nav">
             <div class="logo-abs">BUZZDASH</div>
             <div class="btn-group">
-                <button id="b-gaming" class="btn active" onclick="changeMode('gaming')">Gaming</button>
-                <button id="b-shorts" class="btn" onclick="changeMode('shorts')">Shorts</button>
+                <button id="b-20" class="btn active" onclick="changeMode(20)">Gaming</button>
+                <button id="b-24" class="btn" onclick="changeMode(24)">Shorts</button>
             </div>
         </div>
 
         <div class="nav-arrows">
-            <button class="arrow" onclick="scrollBy(0, -window.innerHeight)">↑</button>
-            <button class="arrow" onclick="scrollBy(0, window.innerHeight)">↓</button>
+            <button class="arrow" onclick="manualScroll(-1)">↑</button>
+            <button class="arrow" onclick="manualScroll(1)">↓</button>
         </div>
 
         <div id="viewport"></div>
     </div>
 
 <script>
-    // METS BIEN TA CLÉ CI-DESSOUS
-    const API_KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs'; 
-    let currentMode = 'gaming';
+    const API_KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs'; //
+    let mode = 20;
 
-    async function loadContent(catId) {
-        const container = document.getElementById('viewport');
-        container.innerHTML = '<p style="text-align:center; padding-top:100px;">Chargement du flux immersif...</p>';
+    function saveP() {
+        localStorage.setItem('bz-s', document.getElementById('p-sound').checked);
+        localStorage.setItem('bz-sc', document.getElementById('p-scroll').checked);
+    }
+
+    function manualScroll(dir) {
+        document.getElementById('viewport').scrollBy({ top: window.innerHeight * dir, behavior: 'smooth' });
+    }
+
+    async function load(cat) {
+        mode = cat;
+        const vp = document.getElementById('viewport');
+        vp.innerHTML = '<p style="text-align:center; margin-top:100px;">Chargement...</p>';
         
         try {
-            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,id&chart=mostPopular&maxResults=15&regionCode=FR&videoCategoryId=${catId}&key=${API_KEY}`);
-            const d = await r.json();
-            container.innerHTML = '';
-            
-            d.items.forEach(v => {
-                // Filtre Shorts : on zappe les vidéos horizontales
-                if(currentMode === 'shorts' && v.contentDetails.definition === 'hd' && !v.snippet.title.toLowerCase().includes('short')) return;
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,id&chart=mostPopular&maxResults=12&regionCode=FR&videoCategoryId=${cat}&key=${API_KEY}`);
+            const data = await r.json();
+            vp.innerHTML = '';
 
+            data.items.forEach(v => {
                 const s = document.createElement('div');
-                s.className = `slide ${currentMode === 'shorts' ? 'vertical' : ''}`;
+                s.className = `slide ${cat === 24 ? 'vertical' : ''}`;
                 s.innerHTML = `
-                    <div class="v-container">
-                        <iframe class="yt-player" src="https://www.youtube.com/embed/${v.id}?enablejsapi=1&autoplay=0&mute=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media"></iframe>
-                        <div class="v-overlay">
-                            <span class="pseudo">@${v.snippet.channelTitle}</span>
-                            <span class="title">${v.snippet.title}</span>
+                    <div class="v-box">
+                        <div class="v-card">
+                            <iframe src="https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&autoplay=0&mute=1" allow="autoplay; encrypted-media"></iframe>
+                        </div>
+                        <div class="v-info-under">
+                            <div class="pseudo">@${v.snippet.channelTitle}</div>
+                            <div class="title">${v.snippet.title}</div>
                         </div>
                     </div>`;
-                container.appendChild(s);
+                vp.appendChild(s);
             });
-            startObserving();
-        } catch (e) { alert("Erreur API YouTube."); }
+            initObs();
+        } catch(e) { console.error(e); }
     }
 
-    // Gestion du Son Simplifiée
-    function startObserving() {
-        setTimeout(() => {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const iframe = entry.target.querySelector('iframe');
-                    if (entry.isIntersecting) {
-                        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                    } else {
-                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                        iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
-                    }
-                });
-            }, { threshold: 0.6 });
-            document.querySelectorAll('.slide').forEach(s => observer.observe(s));
-        }, 1000);
+    function initObs() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const ifr = entry.target.querySelector('iframe');
+                if (entry.isIntersecting) {
+                    ifr.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                    if(document.getElementById('p-sound').checked) ifr.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                } else {
+                    ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                }
+            });
+        }, { threshold: 0.6 });
+        document.querySelectorAll('.slide').forEach(s => observer.observe(s));
     }
 
-    function changeMode(mode) {
-        currentMode = mode;
-        document.getElementById('b-gaming').classList.toggle('active', mode === 'gaming');
-        document.getElementById('b-shorts').classList.toggle('active', mode === 'shorts');
-        loadContent(mode === 'gaming' ? 20 : 24);
+    function changeMode(c) {
+        document.getElementById('b-20').classList.toggle('active', c === 20);
+        document.getElementById('b-24').classList.toggle('active', c === 24);
+        load(c);
     }
 
-    loadContent(20);
+    window.onload = () => {
+        document.getElementById('p-sound').checked = localStorage.getItem('bz-s') === 'true';
+        document.getElementById('p-scroll').checked = localStorage.getItem('bz-sc') === 'true';
+        load(20);
+    };
 </script>
 </body>
 </html>
