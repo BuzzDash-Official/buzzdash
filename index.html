@@ -16,6 +16,7 @@
 
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; overflow: hidden; display: flex; transition: 0.3s; }
         
+        /* TES PARAMÈTRES ET BOUTONS LATERAUX */
         .sidebar { width: 240px; height: 100vh; background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-top: 80px; z-index: 1001; }
         .side-item { padding: 15px 25px; cursor: pointer; color: #888; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
         .side-item:hover { color: var(--accent); background: rgba(0,123,255,0.05); }
@@ -26,6 +27,7 @@
         .settings-content.open { max-height: 150px; }
         .set-row { padding: 10px 25px; display: flex; justify-content: space-between; font-size: 12px; }
 
+        /* TA NAVIGATION ET TA RECHERCHE */
         .nav { height: 70px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; border-bottom: 1px solid var(--border); padding: 0 30px; }
         .logo { font-weight: 900; color: var(--accent); font-size: 24px; text-shadow: 0 0 10px var(--accent); }
         
@@ -41,7 +43,7 @@
 
         .slide { height: 100vh; width: 100%; scroll-snap-align: start; scroll-snap-stop: always; display: flex; justify-content: center; align-items: center; position: relative; }
         
-        /* Zones Pubs */
+        /* TES ZONES DE PUB */
         .ad { position: absolute; background: rgba(0,123,255,0.03); border: 1px dashed #444; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #555; border-radius: 8px; }
         .ad-top { width: 800px; height: 90px; top: 85px; }
         .ad-left { width: 160px; height: 600px; left: 40px; }
@@ -57,6 +59,7 @@
         .pseudo { color: var(--accent); font-weight: 900; }
         .title { opacity: 0.7; font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+        /* TES FLÈCHES DE NAVIGATION */
         .arrows { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 1100; }
         .arrow { background: var(--side); border: 1px solid var(--border); color: var(--text); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
 
