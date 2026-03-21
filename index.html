@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POPCORN PRIVATE ARCHIVES</title>
+    <title>POPCORN TV LIVE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --txt: #ffffff; --acc: #facc15; --side: #0d0d0d; }
         body { background: var(--bg); color: var(--txt); font-family: 'Inter', sans-serif; margin: 0; overflow: hidden; }
 
-        /* INTRO CINÉMATIQUE (OEIL CENTRÉ) */
+        /* INTRO STUDIO CENTRÉE */
         #intro { position: fixed; inset: 0; z-index: 9999; background: black; display: flex; justify-content: center; align-items: center; animation: fadeOut 0.8s forwards 4s; }
         .m-box { position: relative; display: flex; align-items: center; gap: 20px; animation: swirl 1.2s ease-out; }
         .m-pop { font-size: 110px; filter: drop-shadow(0 0 25px var(--acc)); position: relative; display: flex; align-items: center; justify-content: center; }
@@ -22,16 +22,11 @@
 
         /* UI STRUCTURE */
         .sidebar { width: 260px; height: 100vh; position: fixed; left: 0; top: 0; background: var(--side); border-right: 1px solid rgba(255,255,255,0.05); padding: 30px; z-index: 100; }
-        .topbar { position: fixed; top: 0; left: 260px; right: 0; height: 80px; background: var(--bg); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; padding: 0 40px; z-index: 50; }
-        .content { margin-left: 260px; padding: 110px 40px 40px; height: 100vh; overflow-y: auto; scroll-behavior: smooth; }
-
-        /* CARDS */
-        .card { background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; border: 1px solid transparent; position: relative; }
-        .card:hover { border-color: var(--acc); transform: translateY(-8px); background: rgba(255,255,255,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .card img { width: 100%; aspect-ratio: 16/9; object-cover: cover; }
+        .content { margin-left: 260px; padding: 110px 40px 40px; height: 100vh; overflow-y: auto; }
+        .card { background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid transparent; }
+        .card:hover { border-color: var(--acc); transform: translateY(-5px); background: rgba(255,255,255,0.08); }
         
-        /* PLAYER MODAL */
-        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        #modal { position: fixed; inset: 0; background: black; z-index: 2000; display: none; justify-content: center; align-items: center; }
         #modal.active { display: flex; }
     </style>
 </head>
@@ -40,124 +35,87 @@
     <div id="intro">
         <div class="m-box">
             <div class="m-pop">🍿<div class="m-eye">👁️</div></div>
-            <div class="m-name text-yellow-500 font-black text-4xl uppercase">Popcorn<br><span class="text-white font-light">Stream</span></div>
+            <div class="m-name text-yellow-500 font-black text-4xl uppercase">Popcorn<br><span class="text-white">Stream</span></div>
         </div>
     </div>
 
     <aside class="sidebar">
-        <h1 class="text-xl font-black text-yellow-500 italic mb-10 tracking-tighter uppercase">Popcorn Stream</h1>
-        <nav class="space-y-4 font-bold text-gray-400">
-            <button onclick="displayCat('ALUNE')" class="w-full text-left p-3 rounded-xl hover:bg-yellow-500 hover:text-black transition-all">🔥 À LA UNE</button>
-            <button onclick="displayCat('DOCS')" class="w-full text-left p-3 rounded-xl hover:bg-yellow-500 hover:text-black transition-all">🌍 DOCUMENTAIRES</button>
-            <button onclick="displayCat('ACTION')" class="w-full text-left p-3 rounded-xl hover:bg-yellow-500 hover:text-black transition-all">🎬 ACTION</button>
-            <button onclick="displayCat('TRAILERS')" class="w-full text-left p-3 rounded-xl hover:bg-yellow-500 hover:text-black transition-all">🎞️ BANDES-ANNONCES</button>
+        <h1 class="text-xl font-black text-yellow-500 mb-10 uppercase italic">Popcorn Stream</h1>
+        <nav class="space-y-4 font-bold text-gray-400 text-sm">
+            <button onclick="displayManual('ALUNE')" class="w-full text-left p-3 rounded-xl hover:bg-yellow-500 hover:text-black transition">🔥 À LA UNE (TOP BUZZ)</button>
+            <hr class="opacity-10">
+            <p class="px-3 text-[10px] uppercase tracking-widest opacity-30">Chaînes Auto</p>
+            <button onclick="loadRSS('UC_7PruREHpxn-A87A-D-5_A', '🎞️ BANDES-ANNONCES')" class="w-full text-left p-3 rounded-xl hover:bg-yellow-500 hover:text-black transition">🎞️ BANDES-ANNONCES</button>
+            <button onclick="loadRSS('UCwI-JbGNsojunnHbFAc0M4Q', '🌍 DOCUMENTAIRES')" class="w-full text-left p-3 rounded-xl hover:bg-yellow-500 hover:text-black transition">🌍 DOCUMENTAIRES</button>
         </nav>
     </aside>
 
-    <header class="topbar">
-        <input type="text" id="search" oninput="searchInLib(this.value)" placeholder="Chercher dans vos dossiers..." class="w-full max-w-xl bg-white/5 border border-white/10 rounded-2xl px-8 py-3 outline-none focus:border-yellow-500 transition-all">
-    </header>
-
     <main class="content">
-        <h2 id="title" class="text-4xl font-black mb-10 italic uppercase tracking-tighter text-white">Sélectionnez une catégorie</h2>
+        <h2 id="title" class="text-3xl font-black mb-10 italic uppercase">Chargement...</h2>
         <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
     </main>
 
     <div id="modal">
-        <button onclick="closeP()" class="absolute top-8 right-8 text-white font-bold border-2 border-white/20 px-6 py-2 rounded-full hover:bg-white hover:text-black transition">QUITTER LA SÉANCE</button>
-        <div class="w-[90%] max-w-6xl aspect-video shadow-2xl rounded-2xl overflow-hidden border-4 border-white/5">
-            <iframe id="player" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
+        <button onclick="closeP()" class="absolute top-8 right-8 text-white font-bold border px-6 py-2 rounded-full">FERMER</button>
+        <div class="w-[90%] max-w-5xl aspect-video"><iframe id="player" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
     </div>
 
     <script>
-        // ============================================================
-        // 📦 TES DOSSIERS DE FILMS (MODIFIE UNIQUEMENT CETTE ZONE)
-        // ============================================================
-        
-        const library = {
-            
-            // 🔥 DOSSIER : À LA UNE
+        // TA ZONE PERSONNELLE
+        const manualLibrary = {
             ALUNE: [
-                { id: "vG5D0kfqV7c", title: "J’ai traversé une chaîne de montagnes ENTIÈRE seul à 15 ans ! (2 semaines de marche non-stop)" },
-                { id: "vO6v6tY2hGk", title: "L'ascension d'un génie" }
-            ],
-
-            // 🌍 DOSSIER : DOCUMENTAIRES
-            DOCS: [
-                { id: "5p248p6ObzU", title: "Le mystère des pyramides" },
-                { id: "7E89W9iE0Gk", title: "La vie sauvage en 4K" }
-            ],
-
-            // 🎬 DOSSIER : ACTION
-            ACTION: [
-                { id: "9_m8pE5_C3s", title: "Course poursuite extrême" },
-                { id: "p0Z-9Q_jM2Y", title: "Mission Impossible : Fan Made" }
-            ],
-
-            // 🎞️ DOSSIER : BANDES-ANNONCES
-            TRAILERS: [
-                { id: "XW2E26nREhk", title: "GTA VI Trailer Officiel" },
-                { id: "mqqft22hyMT", title: "Batman 2 Preview" }
+                { id: "O-2u2CscyU0", title: "KAIZEN - 1 an pour gravir l'Everest (Inoxtag)" },
+                { id: "vO6v6tY2hGk", title: "L'ascension d'un génie - Reportage" }
             ]
-
         };
 
-        // ============================================================
-        // ⚙️ LOGIQUE DU SITE (NE PAS TOUCHER SAUF SI TU ES SÛR)
-        // ============================================================
-
-        function displayCat(cat) {
+        // FONCTION AUTOMATIQUE RSS (Zéro Quota Google)
+        async function loadRSS(channelId, label) {
             const grid = document.getElementById('grid');
-            document.getElementById('title').innerText = cat.replace('ALUNE', 'À LA UNE');
+            document.getElementById('title').innerText = label;
+            grid.innerHTML = "<p class='col-span-full text-center py-20 animate-pulse'>Récupération du flux TV...</p>";
+
+            const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+            const finalUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+            try {
+                const res = await fetch(finalUrl);
+                const data = await res.json();
+                grid.innerHTML = "";
+                
+                data.items.forEach(item => {
+                    const videoId = item.link.split('v=')[1];
+                    grid.innerHTML += `
+                        <div class="card" onclick="openP('${videoId}')">
+                            <img src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" onerror="this.src='${item.thumbnail}'">
+                            <div class="p-4">
+                                <h3 class="font-bold text-sm line-clamp-2">${item.title}</h3>
+                                <p class="text-[9px] text-yellow-500 mt-2 font-black">AJOUTÉ RÉCEMMENT</p>
+                            </div>
+                        </div>`;
+                });
+            } catch (e) {
+                grid.innerHTML = "<p class='col-span-full text-center text-red-500'>Désolé, la chaîne est temporairement indisponible.</p>";
+            }
+        }
+
+        function displayManual(cat) {
+            const grid = document.getElementById('grid');
+            document.getElementById('title').innerText = "🔥 À LA UNE";
             grid.innerHTML = "";
-            
-            library[cat].forEach(item => {
+            manualLibrary[cat].forEach(item => {
                 grid.innerHTML += `
                     <div class="card" onclick="openP('${item.id}')">
-                        <img src="https://img.youtube.com/vi/${item.id}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${item.id}/0.jpg'">
-                        <div class="p-5">
-                            <h3 class="font-bold text-sm line-clamp-2 text-gray-200">${item.title}</h3>
-                            <div class="mt-4 flex items-center text-[10px] text-yellow-500 font-black tracking-widest uppercase">
-                                <span class="bg-yellow-500/10 px-2 py-1 rounded">HD STREAMING</span>
-                            </div>
-                        </div>
+                        <img src="https://img.youtube.com/vi/${item.id}/maxresdefault.jpg">
+                        <div class="p-4"><h3 class="font-bold text-sm">${item.title}</h3></div>
                     </div>`;
             });
         }
 
-        function searchInLib(val) {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = "";
-            const search = val.toLowerCase();
+        function openP(id) { document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1`; document.getElementById('modal').classList.add('active'); }
+        function closeP() { document.getElementById('player').src = ""; document.getElementById('modal').classList.remove('active'); }
 
-            for (let folder in library) {
-                library[folder].forEach(item => {
-                    if (item.title.toLowerCase().includes(search)) {
-                        grid.innerHTML += `
-                            <div class="card" onclick="openP('${item.id}')">
-                                <img src="https://img.youtube.com/vi/${item.id}/0.jpg">
-                                <div class="p-5">
-                                    <h3 class="font-bold text-sm">${item.title}</h3>
-                                </div>
-                            </div>`;
-                    }
-                });
-            }
-        }
-
-        function openP(id) {
-            document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1&rel=0`;
-            document.getElementById('modal').classList.add('active');
-        }
-
-        function closeP() {
-            document.getElementById('player').src = "";
-            document.getElementById('modal').classList.remove('active');
-        }
-
-        // Lancement par défaut sur les nouveautés
-        setTimeout(() => displayCat('ALUNE'), 4200);
+        setTimeout(() => displayManual('ALUNE'), 4200);
     </script>
 </body>
 </html>
