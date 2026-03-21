@@ -3,143 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuzzDash | Next Gen</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;900&display=swap" rel="stylesheet">
+    <title>BuzzDash - Overlay Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #9d00ff; --bg: #000000; --side: #050505; --nav-h: 70px; }
+        :root { --accent: #9d00ff; --bg: #000000; --side: #080808; --nav-h: 70px; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; display: flex; }
         
-        /* Correction du scroll bloqué */
-        html, body { margin: 0; padding: 0; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; height: 100%; overflow: hidden; }
-        
-        body { display: flex; }
+        /* Barre Latérale */
+        .sidebar { width: 220px; height: 100vh; background: var(--side); border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; padding-top: 80px; box-sizing: border-box; }
+        .side-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 15px; color: #888; transition: 0.2s; }
+        .side-item:hover, .side-item.active { background: #111; color: white; }
+        .side-item.active { border-left: 4px solid var(--accent); color: var(--accent); }
 
-        /* Sidebar Stylisée */
-        .sidebar { width: 240px; height: 100vh; background: var(--side); border-right: 1px solid #151515; display: flex; flex-direction: column; padding-top: 80px; z-index: 1001; }
-        .side-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; color: #666; transition: 0.3s; }
-        .side-item:hover, .side-item.active { color: var(--accent); background: #080808; }
+        /* Contenu Principal */
+        .main-content { flex: 1; height: 100vh; position: relative; }
         
-        /* Menu Paramètres Accordéon */
-        .settings-btn { padding: 15px 25px; cursor: pointer; border-top: 1px solid #111; margin-top: 20px; color: #444; font-size: 13px; font-weight: bold; display: flex; justify-content: space-between; }
-        .settings-content { max-height: 0; overflow: hidden; transition: 0.4s; background: #030303; }
-        .settings-content.open { max-height: 200px; padding-bottom: 10px; }
-        .set-row { padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #888; }
+        /* Nav centrée */
+        .nav { height: var(--nav-h); display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); position: fixed; top: 0; left: 220px; right: 0; z-index: 1000; border-bottom: 1px solid #1a1a1a; }
+        .logo-abs { position: absolute; left: 30px; font-weight: 900; color: var(--accent); font-size: 26px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 15px var(--accent); }
+        .btn-group { display: flex; gap: 5px; background: #080808; padding: 5px; border-radius: 30px; border: 1px solid #1a1a1a; }
+        .btn { background: transparent; border: none; color: #666; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; transition: 0.3s; }
+        .btn.active { background: var(--accent); color: white; box-shadow: 0 0 15px var(--accent); }
 
-        /* Navigation */
-        .nav { height: var(--nav-h); position: fixed; top: 0; left: 240px; right: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; z-index: 1000; border-bottom: 1px solid #111; }
-        .logo { position: absolute; left: 30px; font-weight: 900; font-size: 24px; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
-        
-        .mode-selector { display: flex; gap: 10px; background: #0a0a0a; padding: 5px; border-radius: 50px; border: 1px solid #222; }
-        .mode-btn { border: none; background: transparent; color: #555; padding: 8px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .mode-btn.active { background: var(--accent); color: white; box-shadow: 0 0 15px var(--accent); }
-
-        /* Viewport Interactif */
-        #viewport { flex: 1; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; outline: none; }
+        /* Viewport ultra-fluide */
+        #viewport { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; }
         #viewport::-webkit-scrollbar { display: none; }
 
-        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: var(--nav-h); box-sizing: border-box; }
+        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; justify-content: center; align-items: center; position: relative; padding-top: calc(var(--nav-h) + 10px); box-sizing: border-box; }
         
-        /* Cadre Vidéo "Glow" */
-        .video-container { width: 90%; max-width: 900px; aspect-ratio: 16/9; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #1a1a1a; transition: 0.5s; }
-        .vertical .video-container { max-width: 400px; height: 82vh; aspect-ratio: unset; }
-        .video-container:hover { border-color: var(--accent); box-shadow: 0 0 30px rgba(157, 0, 255, 0.2); }
+        /* Conteneur Immersif */
+        .v-container { width: 90%; max-width: 950px; aspect-ratio: 16/9; position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #1a1a1a; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .vertical .v-container { max-width: 420px; height: 88vh; aspect-ratio: unset; } 
         
         iframe { width: 100%; height: 100%; border: none; }
 
-        .info-bar { width: 90%; max-width: 900px; margin-top: 15px; display: flex; align-items: center; gap: 10px; }
-        .author-link { color: var(--accent); text-decoration: none; font-weight: bold; font-size: 14px; }
+        /* ZONE D'OVERLAY (Pseudo + Titre) */
+        .v-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); padding: 20px; box-sizing: border-box; }
+        .v-overlay .pseudo { font-weight: 900; font-size: 18px; color: var(--accent); text-shadow: 0 0 10px rgba(157,0,255,0.5); display: inline; }
+        .v-overlay .title { font-weight: 700; font-size: 16px; color: white; display: inline; margin-left: 10px; opacity: 0.9; }
 
-        @media (max-width: 900px) { .sidebar { display: none; } .nav { left: 0; } }
+        /* Flèches de navigation */
+        .nav-arrows { position: fixed; right: 30px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 100; }
+        .arrow { background: rgba(255,255,255,0.05); border: 1px solid #222; color: white; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: 0.3s; }
+        .arrow:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px var(--accent); }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <div class="side-item active">🏠 Accueil</div>
-        <div class="settings-btn" onclick="document.getElementById('set-panel').classList.toggle('open')">⚙️ PARAMÈTRES <span>▼</span></div>
-        <div id="set-panel" class="settings-content">
-            <div class="set-row">
-                <span>Son Automatique</span>
-                <input type="checkbox" id="pref-sound" onchange="savePrefs()">
-            </div>
-            <div class="set-row">
-                <span>Scroll Automatique</span>
-                <input type="checkbox" id="pref-scroll" onchange="savePrefs()">
-            </div>
-        </div>
     </div>
 
-    <div id="viewport"></div>
-
-    <div class="nav">
-        <div class="logo">BUZZDASH</div>
-        <div class="mode-selector">
-            <button id="btn-20" class="mode-btn active" onclick="loadFeed(20)">GAMING</button>
-            <button id="btn-24" class="mode-btn" onclick="loadFeed(24)">SHORTS</button>
+    <div class="main-content">
+        <div class="nav">
+            <div class="logo-abs">BUZZDASH</div>
+            <div class="btn-group">
+                <button id="b-gaming" class="btn active" onclick="changeMode('gaming')">Gaming</button>
+                <button id="b-shorts" class="btn" onclick="changeMode('shorts')">Shorts</button>
+            </div>
         </div>
+
+        <div class="nav-arrows">
+            <button class="arrow" onclick="scrollBy(0, -window.innerHeight)">↑</button>
+            <button class="arrow" onclick="scrollBy(0, window.innerHeight)">↓</button>
+        </div>
+
+        <div id="viewport"></div>
     </div>
 
 <script>
-    const KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs'; //
-    let currentCat = 20;
+    // METS BIEN TA CLÉ CI-DESSOUS
+    const API_KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs'; 
+    let currentMode = 'gaming';
 
-    function savePrefs() {
-        localStorage.setItem('bz-sound', document.getElementById('pref-sound').checked);
-        localStorage.setItem('bz-scroll', document.getElementById('pref-scroll').checked);
-    }
-
-    async function loadFeed(cat) {
-        currentCat = cat;
-        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-'+cat).classList.add('active');
-        
-        const view = document.getElementById('viewport');
-        view.innerHTML = '<div style="text-align:center; margin-top:20vh;">Initialisation du flux...</div>';
+    async function loadContent(catId) {
+        const container = document.getElementById('viewport');
+        container.innerHTML = '<p style="text-align:center; padding-top:100px;">Chargement du flux immersif...</p>';
         
         try {
-            const resp = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,id&chart=mostPopular&maxResults=12&regionCode=FR&videoCategoryId=${cat}&key=${KEY}`);
-            const data = await resp.json();
-            view.innerHTML = '';
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,id&chart=mostPopular&maxResults=15&regionCode=FR&videoCategoryId=${catId}&key=${API_KEY}`);
+            const d = await r.json();
+            container.innerHTML = '';
+            
+            d.items.forEach(v => {
+                // Filtre Shorts : on zappe les vidéos horizontales
+                if(currentMode === 'shorts' && v.contentDetails.definition === 'hd' && !v.snippet.title.toLowerCase().includes('short')) return;
 
-            data.items.forEach(v => {
-                const slide = document.createElement('div');
-                slide.className = `slide ${cat === 24 ? 'vertical' : ''}`;
-                slide.innerHTML = `
-                    <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/${v.id}?enablejsapi=1&autoplay=0&mute=1&rel=0" allow="autoplay; encrypted-media"></iframe>
-                    </div>
-                    <div class="info-bar">
-                        <a href="https://www.youtube.com/channel/${v.snippet.channelId}" target="_blank" class="author-link">@${v.snippet.channelTitle}</a>
-                    </div>
-                `;
-                view.appendChild(slide);
+                const s = document.createElement('div');
+                s.className = `slide ${currentMode === 'shorts' ? 'vertical' : ''}`;
+                s.innerHTML = `
+                    <div class="v-container">
+                        <iframe class="yt-player" src="https://www.youtube.com/embed/${v.id}?enablejsapi=1&autoplay=0&mute=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media"></iframe>
+                        <div class="v-overlay">
+                            <span class="pseudo">@${v.snippet.channelTitle}</span>
+                            <span class="title">${v.snippet.title}</span>
+                        </div>
+                    </div>`;
+                container.appendChild(s);
             });
-            initObserver();
-        } catch(e) { console.error(e); }
+            startObserving();
+        } catch (e) { alert("Erreur API YouTube."); }
     }
 
-    function initObserver() {
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const ifr = entry.target.querySelector('iframe');
-                if (entry.isIntersecting) {
-                    ifr.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                    if(document.getElementById('pref-sound').checked) {
-                        ifr.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
-                    }
-                } else {
-                    ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                }
-            });
-        }, { threshold: 0.7 });
-        document.querySelectorAll('.slide').forEach(s => obs.observe(s));
-    }
-
-    // Chargement initial des préférences
-    window.onload = () => {
-        document.getElementById('pref-sound').checked = localStorage.getItem('bz-sound') === 'true';
-        document.getElementById('pref-scroll').checked = localStorage.getItem('bz-scroll') === 'true';
-        loadFeed(20);
-    };
-</script>
-</body>
-</html>
+    // Gestion du Son Simplifiée
+    function startObserving() {
+        setTimeout(() => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const iframe = entry.target.querySelector('iframe');
+                    if (entry.isIntersecting) {
+                        iframe.contentWindow.postMessage('{"event":"command","
