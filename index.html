@@ -1,66 +1,58 @@
 <script>
-// --- TA ZONE MANUELLE (À LA UNE) ---
+// Tes vidéos choisies à la main
 const ALUNE = [
   { id:"O-2u2CscyU0", title:"KAIZEN — 1 an pour gravir l'Everest" },
   { id:"p0Z-9Q_jM2Y", title:"Inoxtag : Nouveau Départ" },
-  { id:"PCMrUGqH6fQ", title:"La face cachée des océans" },
-  { id:"7Xfk9CN6S4E", title:"L'univers en 1 heure" }
+  { id:"PCMrUGqH6fQ", title:"La face cachée des océans" }
 ];
 
-// --- LE MOTEUR QUI S'AUTO-ALIMENTE (RSS) ---
+// LE MOTEUR AUTO-ALIMENTÉ (RSS)
 async function loadRSS(channelId, label, icon) {
   const grid = document.getElementById('grid');
-  const secTitle = document.getElementById('sec-title');
-  const heroZone = document.getElementById('hero-zone');
-  
-  secTitle.textContent = label.toUpperCase();
-  heroZone.innerHTML = '';
-  grid.innerHTML = `<div class="loader-wrap"><div class="spinner"></div><p>Récupération des dernières vidéos...</p></div>`;
+  document.getElementById('sec-title').textContent = label.toUpperCase();
+  document.getElementById('hero-zone').innerHTML = '';
+  grid.innerHTML = `<div class="loader-wrap"><div class="spinner"></div><p>Récupération auto...</p></div>`;
 
-  // On utilise un proxy public pour éviter les blocages
-  const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-  const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&api_key=oyny6qvxz0v4mcznrtq3qf7zpsm8v0n6jdf3m5bw`;
+  // Utilisation d'un convertisseur fiable pour lire le flux YouTube sans clé API
+  const proxy = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id=' + channelId)}&api_key=oyny6qvxz0v4mcznrtq3qf7zpsm8v0n6jdf3m5bw`;
 
   try {
-    const res = await fetch(proxyUrl);
+    const res = await fetch(proxy);
     const data = await res.json();
     
-    if (!data.items || data.items.length === 0) throw new Error("Flux vide");
+    if (!data.items || data.items.length === 0) throw new Error();
 
     grid.innerHTML = "";
-    
-    // La 1ère vidéo va dans le grand écran (Hero)
+    // On affiche la dernière vidéo de la chaîne en grand
     const firstVid = data.items[0].link.split('v=')[1];
     renderHero(firstVid, data.items[0].title, icon);
 
-    // Les autres vont dans la grille
+    // On remplit la grille avec les autres vidéos
     data.items.slice(1, 12).forEach(v => {
       const id = v.link.split('v=')[1];
       grid.innerHTML += `
         <div class="vcard" onclick="openPlayer('${id}','${v.title.replace(/'/g," ")}')">
           <div class="thumb-box">
             <img class="vthumb" src="https://img.youtube.com/vi/${id}/mqdefault.jpg">
-            <div class="voverlay"><div class="play-circle"></div></div>
+            <div class="voverlay">▶</div>
           </div>
           <div class="vbody"><div class="vtitle">${v.title}</div></div>
         </div>`;
     });
-
   } catch (e) {
-    grid.innerHTML = `<div class="err-box">⚠️ Erreur de connexion au flux YouTube.<br>Vérifie ta connexion ou réessaie dans un instant.</div>`;
+    grid.innerHTML = `<div class="err-box">⚠️ Le flux auto est temporairement indisponible.</div>`;
   }
 }
 
-// --- FONCTIONS D'AFFICHAGE ---
 function renderHero(id, title, icon='🔥') {
   document.getElementById('hero-zone').innerHTML = `
     <div class="hero" onclick="openPlayer('${id}','${title.replace(/'/g," ")}')">
-      <img src="https://img.youtube.com/vi/${id}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${id}/hqdefault.jpg'">
+      <img src="https://img.youtube.com/vi/${id}/maxresdefault.jpg">
       <div class="hero-grad"></div>
       <div class="hero-info">
-        <span class="hero-badge">${icon} RÉCENT</span>
+        <span class="hero-badge">${icon} DERNIÈRE SORTIE</span>
         <div class="hero-title">${title}</div>
-        <button class="hero-play">▶ Regarder</button>
+        <button class="hero-play">Regarder</button>
       </div>
     </div>`;
 }
@@ -70,50 +62,27 @@ function displayManual() {
   document.getElementById('hero-zone').innerHTML = '';
   const grid = document.getElementById('grid');
   grid.innerHTML = "";
-  
   renderHero(ALUNE[0].id, ALUNE[0].title);
-  
   ALUNE.slice(1).forEach(v => {
-    grid.innerHTML += `
-      <div class="vcard" onclick="openPlayer('${v.id}','${v.title}')">
-        <div class="thumb-box">
-          <img class="vthumb" src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg">
-          <div class="voverlay"><div class="play-circle"></div></div>
-        </div>
-        <div class="vbody"><div class="vtitle">${v.title}</div></div>
-      </div>`;
+    grid.innerHTML += `<div class="vcard" onclick="openPlayer('${v.id}','${v.title}')"><div class="thumb-box"><img class="vthumb" src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg"><div class="voverlay">▶</div></div><div class="vbody"><div class="vtitle">${v.title}</div></div></div>`;
   });
 }
 
-// --- UTILITAIRES ---
+// Fonctions utilitaires pour le menu et le player
 function activateNav(btn) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
-
 function openPlayer(id, title) {
-  document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+  document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
   document.getElementById('modal-ttl').textContent = title;
   document.getElementById('modal').classList.add('open');
 }
-
 function closePlayer() {
   document.getElementById('player').src = '';
   document.getElementById('modal').classList.remove('open');
 }
 
-function toggleTheme() {
-  document.body.classList.toggle('light');
-  document.getElementById('theme-btn').textContent = document.body.classList.contains('light') ? '🌙 Mode Sombre' : '☀️ Mode Clair';
-}
-
-function filterCards(q) {
-  const cards = document.querySelectorAll('.vcard');
-  cards.forEach(c => {
-    c.style.display = c.innerText.toLowerCase().includes(q.toLowerCase()) ? 'block' : 'none';
-  });
-}
-
-// Lancement automatique après l'intro (5.5s)
+// Lancement après l'intro (5.5 secondes)
 setTimeout(displayManual, 5500);
 </script>
