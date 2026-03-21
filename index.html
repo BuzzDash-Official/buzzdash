@@ -7,8 +7,6 @@
     
     <meta name="google-adsense-account" content="ca-pub-4636323611777367">
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4636323611777367" crossorigin="anonymous"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #007bff; --bg: #000000; --side: #080808; --text: #ffffff; --border: #1a1a1a; }
@@ -16,7 +14,7 @@
 
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; overflow: hidden; display: flex; transition: 0.3s; }
         
-        /* TES PARAMÈTRES ET BOUTONS LATERAUX */
+        /* SIDEBAR */
         .sidebar { width: 240px; height: 100vh; background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-top: 80px; z-index: 1001; }
         .side-item { padding: 15px 25px; cursor: pointer; color: #888; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
         .side-item:hover { color: var(--accent); background: rgba(0,123,255,0.05); }
@@ -27,7 +25,7 @@
         .settings-content.open { max-height: 150px; }
         .set-row { padding: 10px 25px; display: flex; justify-content: space-between; font-size: 12px; }
 
-        /* TA NAVIGATION ET TA RECHERCHE */
+        /* NAV */
         .nav { height: 70px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; border-bottom: 1px solid var(--border); padding: 0 30px; }
         .logo { font-weight: 900; color: var(--accent); font-size: 24px; text-shadow: 0 0 10px var(--accent); }
         
@@ -43,7 +41,7 @@
 
         .slide { height: 100vh; width: 100%; scroll-snap-align: start; scroll-snap-stop: always; display: flex; justify-content: center; align-items: center; position: relative; }
         
-        /* TES ZONES DE PUB */
+        /* ZONES PUB */
         .ad { position: absolute; background: rgba(0,123,255,0.03); border: 1px dashed #444; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #555; border-radius: 8px; }
         .ad-top { width: 800px; height: 90px; top: 85px; }
         .ad-left { width: 160px; height: 600px; left: 40px; }
@@ -59,7 +57,6 @@
         .pseudo { color: var(--accent); font-weight: 900; }
         .title { opacity: 0.7; font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* TES FLÈCHES DE NAVIGATION */
         .arrows { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 1100; }
         .arrow { background: var(--side); border: 1px solid var(--border); color: var(--text); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
 
@@ -103,12 +100,7 @@
     let currentCat = 20;
 
     function handleSearch(e) { if (e.key === 'Enter') load(currentCat, e.target.value); }
-
-    function resetToTrends() {
-        document.getElementById('searchInput').value = "";
-        load(currentCat);
-    }
-
+    function resetToTrends() { document.getElementById('searchInput').value = ""; load(currentCat); }
     function navMove(dir) {
         const vp = document.getElementById('viewport');
         currentPos += dir * window.innerHeight;
@@ -128,7 +120,7 @@
 
     async function load(cat, query = "") {
         const vp = document.getElementById('viewport');
-        vp.innerHTML = '<div style="padding-top:200px; text-align:center; color:var(--accent);">Mise à jour du flux...</div>';
+        vp.innerHTML = '<div style="padding-top:200px; text-align:center; color:var(--accent);">Mise à jour...</div>';
         
         let url;
         if (query) {
@@ -153,7 +145,7 @@
                     <div class="ad ad-right">PUB LATERALE</div>
                     <div class="v-box">
                         <div class="v-card">
-                            <iframe src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&mute=1" allow="autoplay; encrypted-media"></iframe>
+                            <iframe id="ifr-${videoId}" src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&mute=1" allow="autoplay; encrypted-media"></iframe>
                         </div>
                         <div class="v-info">
                             <span class="pseudo">@${v.channelTitle}</span>
@@ -170,10 +162,18 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const ifr = entry.target.querySelector('iframe');
+                const isAutoSon = document.getElementById('p-son').checked;
+                
                 if (entry.isIntersecting) {
+                    // Lecture automatique
                     ifr.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                    // Si Son Auto est coché, on démuette
+                    if(isAutoSon) {
+                        ifr.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                    }
                 } else {
                     ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    ifr.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
                 }
             });
         }, { threshold: 0.8 });
