@@ -3,51 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuzzDash - Final Design</title>
+    <title>BuzzDash - Ultra Wide</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #9d00ff; --bg: #000000; --side: #080808; --nav-h: 70px; }
+        :root { --accent: #9d00ff; --bg: #000000; --side: #050505; --nav-h: 70px; }
         body { margin: 0; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; display: flex; }
         
-        /* Sidebar avec Paramètres */
+        /* Sidebar */
         .sidebar { width: 240px; height: 100vh; background: var(--side); border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; padding-top: 80px; z-index: 1001; }
-        .side-item { padding: 15px 25px; cursor: pointer; color: #888; transition: 0.2s; font-size: 15px; }
-        .side-item.active { border-left: 4px solid var(--accent); color: var(--accent); }
-        .settings-header { padding: 15px 25px; cursor: pointer; border-top: 1px solid #1a1a1a; margin-top: 20px; color: #aaa; display: flex; justify-content: space-between; font-size: 13px; }
-        .settings-content { max-height: 0; overflow: hidden; transition: 0.3s; background: #050505; }
-        .settings-content.open { max-height: 150px; }
-        .set-row { padding: 10px 25px; display: flex; justify-content: space-between; font-size: 12px; }
+        .side-item { padding: 15px 25px; cursor: pointer; color: #666; font-size: 15px; }
+        .side-item.active { border-left: 4px solid var(--accent); color: var(--accent); background: #080808; }
+        .settings-header { padding: 15px 25px; cursor: pointer; border-top: 1px solid #111; margin-top: 20px; color: #888; display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; }
+        .settings-content { max-height: 0; overflow: hidden; transition: 0.3s; background: #030303; }
+        .settings-content.open { max-height: 150px; border-bottom: 1px solid #111; }
+        .set-row { padding: 10px 25px; display: flex; justify-content: space-between; font-size: 12px; color: #666; }
 
         /* Navigation */
-        .nav { height: var(--nav-h); display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.9); position: fixed; top: 0; left: 240px; right: 0; z-index: 1000; border-bottom: 1px solid #1a1a1a; }
+        .nav { height: var(--nav-h); display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.95); position: fixed; top: 0; left: 240px; right: 0; z-index: 1000; border-bottom: 1px solid #1a1a1a; }
         .logo-abs { position: absolute; left: 30px; font-weight: 900; color: var(--accent); font-size: 24px; text-shadow: 0 0 10px var(--accent); }
-        .btn-group { display: flex; gap: 5px; background: #0a0a0a; padding: 5px; border-radius: 30px; border: 1px solid #222; }
-        .btn { background: transparent; border: none; color: #555; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; }
-        .btn.active { background: var(--accent); color: white; }
+        .btn-group { display: flex; gap: 5px; background: #000; padding: 5px; border-radius: 30px; border: 1px solid #222; }
+        .btn { background: transparent; border: none; color: #555; padding: 10px 22px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn.active { background: var(--accent); color: white; box-shadow: 0 0 15px var(--accent); }
 
         /* Viewport */
-        #viewport { flex: 1; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; }
+        #viewport { flex: 1; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
         #viewport::-webkit-scrollbar { display: none; }
 
-        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 40px; }
+        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 50px; box-sizing: border-box; }
         
-        /* Zone Vidéo Agrandie */
-        .v-box { width: 92%; max-width: 1100px; position: relative; }
-        .vertical .v-box { max-width: 450px; }
+        /* ZONE VIDÉO AGRANDIE */
+        .v-container { width: 95%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
+        .vertical .v-container { max-width: 480px; }
 
-        .v-card { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; border: 1px solid #222; }
-        .vertical .v-card { aspect-ratio: 9/16; height: 75vh; }
+        .v-card { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid #222; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .vertical .v-card { aspect-ratio: 9/16; height: 80vh; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        /* Barre d'infos sous la vidéo */
-        .v-info-under { width: 100%; margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-start; border: 1px solid #333; padding: 12px; border-radius: 10px; background: #050505; }
-        .pseudo { color: var(--accent); font-weight: 900; font-size: 16px; min-width: 150px; }
-        .title { color: white; font-size: 14px; text-align: right; flex: 1; opacity: 0.8; }
+        /* Infos alignées tout droit */
+        .v-footer { width: 100%; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
+        .pseudo { color: var(--accent); font-weight: 900; font-size: 18px; text-shadow: 0 0 5px rgba(157,0,255,0.3); }
+        .title { color: #eee; font-size: 15px; font-weight: 600; text-align: right; flex: 1; margin-left: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Flèches Navigation */
-        .nav-arrows { position: fixed; right: 25px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 20px; }
-        .arrow { background: #111; border: 1px solid #333; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 20px; }
-        .arrow:hover { background: var(--accent); border-color: var(--accent); }
+        /* Flèches */
+        .nav-arrows { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; }
+        .arrow { background: #111; border: 1px solid #222; color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+        .arrow:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
 
         @media (max-width: 1000px) { .sidebar { display: none; } .nav { left: 0; } }
     </style>
@@ -55,11 +55,11 @@
 <body>
 
     <div class="sidebar">
-        <div class="side-item active">🏠 Accueil</div>
-        <div class="settings-header" onclick="document.getElementById('set-content').classList.toggle('open')">⚙️ PARAMÈTRES <span>▼</span></div>
-        <div id="set-content" class="settings-content">
-            <div class="set-row"><span>Son Auto</span> <input type="checkbox" id="p-sound" onchange="saveP()"></div>
-            <div class="set-row"><span>Scroll Auto</span> <input type="checkbox" id="p-scroll" onchange="saveP()"></div>
+        <div class="side-item active" onclick="location.reload()">🏠 Accueil</div>
+        <div class="settings-header" onclick="document.getElementById('set-panel').classList.toggle('open')">⚙️ PARAMÈTRES <span>▼</span></div>
+        <div id="set-panel" class="settings-content">
+            <div class="set-row"><span>Son Auto</span> <input type="checkbox" id="pref-s" onchange="saveP()"></div>
+            <div class="set-row"><span>Scroll Auto</span> <input type="checkbox" id="pref-sc" onchange="saveP()"></div>
         </div>
     </div>
 
@@ -73,45 +73,46 @@
         </div>
 
         <div class="nav-arrows">
-            <button class="arrow" onclick="manualScroll(-1)">↑</button>
-            <button class="arrow" onclick="manualScroll(1)">↓</button>
+            <button class="arrow" onclick="scrollV(-1)">↑</button>
+            <button class="arrow" onclick="scrollV(1)">↓</button>
         </div>
 
         <div id="viewport"></div>
     </div>
 
 <script>
-    const API_KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs'; //
-    let mode = 20;
+    const KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs'; //
+    let currentMode = 20;
 
     function saveP() {
-        localStorage.setItem('bz-s', document.getElementById('p-sound').checked);
-        localStorage.setItem('bz-sc', document.getElementById('p-scroll').checked);
+        localStorage.setItem('bz-son', document.getElementById('pref-s').checked);
+        localStorage.setItem('bz-scroll', document.getElementById('pref-sc').checked);
     }
 
-    function manualScroll(dir) {
-        document.getElementById('viewport').scrollBy({ top: window.innerHeight * dir, behavior: 'smooth' });
+    function scrollV(d) {
+        document.getElementById('viewport').scrollBy(0, window.innerHeight * d);
     }
 
     async function load(cat) {
-        mode = cat;
+        currentMode = cat;
         const vp = document.getElementById('viewport');
-        vp.innerHTML = '<p style="text-align:center; margin-top:100px;">Chargement...</p>';
+        vp.innerHTML = '<div style="text-align:center; padding-top:150px; color:#9d00ff;">Génération du flux infini...</div>';
         
         try {
-            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,id&chart=mostPopular&maxResults=12&regionCode=FR&videoCategoryId=${cat}&key=${API_KEY}`);
-            const data = await r.json();
+            // maxResults=50 pour supprimer la limite
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,id&chart=mostPopular&maxResults=50&regionCode=FR&videoCategoryId=${cat}&key=${KEY}`);
+            const d = await r.json();
             vp.innerHTML = '';
 
-            data.items.forEach(v => {
+            d.items.forEach(v => {
                 const s = document.createElement('div');
                 s.className = `slide ${cat === 24 ? 'vertical' : ''}`;
                 s.innerHTML = `
-                    <div class="v-box">
+                    <div class="v-container">
                         <div class="v-card">
                             <iframe src="https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&autoplay=0&mute=1" allow="autoplay; encrypted-media"></iframe>
                         </div>
-                        <div class="v-info-under">
+                        <div class="v-footer">
                             <div class="pseudo">@${v.snippet.channelTitle}</div>
                             <div class="title">${v.snippet.title}</div>
                         </div>
@@ -119,7 +120,7 @@
                 vp.appendChild(s);
             });
             initObs();
-        } catch(e) { console.error(e); }
+        } catch(e) { console.error("Erreur API"); }
     }
 
     function initObs() {
@@ -128,9 +129,10 @@
                 const ifr = entry.target.querySelector('iframe');
                 if (entry.isIntersecting) {
                     ifr.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                    if(document.getElementById('p-sound').checked) ifr.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                    if(document.getElementById('pref-s').checked) ifr.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
                 } else {
                     ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    ifr.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
                 }
             });
         }, { threshold: 0.6 });
@@ -144,8 +146,8 @@
     }
 
     window.onload = () => {
-        document.getElementById('p-sound').checked = localStorage.getItem('bz-s') === 'true';
-        document.getElementById('p-scroll').checked = localStorage.getItem('bz-sc') === 'true';
+        document.getElementById('pref-s').checked = localStorage.getItem('bz-son') === 'true';
+        document.getElementById('pref-sc').checked = localStorage.getItem('bz-scroll') === 'true';
         load(20);
     };
 </script>
