@@ -3,68 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuzzDash | L'Expérience Ultime</title>
+    <title>BuzzDash | Paramètres & Auto-Scroll</title>
     <style>
         :root { --accent: #ff0050; --bg: #0f0f0f; --side: #161616; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Roboto', Arial, sans-serif; overflow: hidden; display: flex; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Roboto', sans-serif; overflow: hidden; display: flex; }
         
-        /* Barre Latérale (Style YouTube) */
-        .sidebar { width: 240px; height: 100vh; background: var(--side); border-right: 1px solid #333; display: flex; flex-direction: column; padding-top: 80px; transition: 0.3s; }
-        .side-item { padding: 12px 24px; cursor: pointer; display: flex; align-items: center; gap: 15px; font-size: 14px; transition: 0.2s; }
+        /* Barre Latérale */
+        .sidebar { width: 240px; height: 100vh; background: var(--side); border-right: 1px solid #333; display: flex; flex-direction: column; padding-top: 80px; }
+        .side-item { padding: 12px 24px; cursor: pointer; display: flex; align-items: center; gap: 15px; font-size: 15px; }
         .side-item:hover { background: #333; }
-        .side-item.active { background: #3f3f3f; font-weight: bold; border-left: 4px solid var(--accent); }
+        .side-title { padding: 10px 24px; font-size: 12px; color: #777; text-transform: uppercase; margin-top: 20px; }
+        
+        /* Checkbox Style */
+        .setting-row { padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        input[type="checkbox"] { cursor: pointer; accent-color: var(--accent); width: 18px; height: 18px; }
 
         /* Contenu Principal */
         .main-content { flex: 1; height: 100vh; position: relative; }
         
-        /* Navigation Haute */
-        .nav { height: 60px; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); position: fixed; top: 0; right: 0; left: 0; z-index: 1000; border-bottom: 1px solid #333; }
-        .logo { font-weight: 900; color: var(--accent); font-size: 22px; letter-spacing: 1px; }
-        .btn-group { display: flex; gap: 10px; }
-        .btn { background: #333; border: none; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; text-transform: uppercase; }
-        .btn.active { background: white; color: black; font-weight: bold; }
+        /* Nav centrée */
+        .nav { height: 60px; display: flex; justify-content: center; align-items: center; background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(10px); position: fixed; top: 0; width: 100%; z-index: 1000; border-bottom: 1px solid #333; }
+        .logo-abs { position: absolute; left: 30px; font-weight: 900; color: var(--accent); font-size: 22px; }
+        .btn-group { display: flex; gap: 5px; background: #222; padding: 4px; border-radius: 8px; }
+        .btn { background: transparent; border: none; color: white; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn.active { background: #444; }
 
-        /* Viewport de Scroll */
+        /* Viewport */
         #viewport { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
         #viewport::-webkit-scrollbar { display: none; }
 
-        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
-        
-        /* Lecteur Vidéo */
-        .v-card { width: 90%; max-width: 900px; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #333; position: relative; }
-        .vertical .v-card { max-width: 400px; aspect-ratio: 9 / 16; height: 80vh; }
-        .v-card iframe { width: 100%; aspect-ratio: 16 / 9; border: none; }
-        .vertical .v-card iframe { height: 100%; aspect-ratio: unset; }
+        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .v-card { width: 90%; max-width: 850px; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
+        .vertical .v-card { max-width: 380px; aspect-ratio: 9/16; height: 75vh; }
+        iframe { width: 100%; height: 100%; border: none; }
 
-        /* Infos Youtubeur */
-        .v-info { width: 90%; max-width: 900px; margin-top: 15px; padding: 0 10px; }
-        .channel-link { color: #aaa; text-decoration: none; font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
-        .channel-link:hover { color: white; text-decoration: underline; }
-        .channel-link::before { content: '●'; color: var(--accent); font-size: 10px; }
+        /* Flèches alignées à droite */
+        .arrows { position: fixed; right: 30px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; }
+        .arr-btn { width: 50px; height: 50px; border-radius: 50%; border: 1px solid #444; background: rgba(255,255,255,0.1); color: white; cursor: pointer; font-size: 24px; }
+        .arr-btn:hover { background: var(--accent); border-color: var(--accent); }
 
-        /* Flèches */
-        .arrows { position: fixed; right: 30px; bottom: 50px; display: flex; flex-direction: column; gap: 10px; z-index: 2000; }
-        .arr-btn { width: 45px; height: 45px; border-radius: 50%; border: none; background: var(--accent); color: white; cursor: pointer; font-size: 20px; box-shadow: 0 4px 15px rgba(255,0,80,0.4); }
-
-        @media (max-width: 800px) { .sidebar { display: none; } }
+        .v-info { width: 90%; max-width: 850px; margin-top: 15px; }
+        .channel { color: var(--accent); text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="side-item active">🏠 Accueil</div>
-        <div class="side-item">🔥 Tendances</div>
-        <div class="side-item">🎮 Gaming</div>
-        <div class="side-item">🎬 Shorts</div>
-        <div class="side-item">🎵 Musique</div>
-        <hr style="border: 0.5px solid #333; width: 90%; margin: 20px auto;">
-        <div class="side-item">👤 Ta chaîne</div>
-        <div class="side-item">🕒 Historique</div>
+        <div class="side-item">🏠 Accueil</div>
+        <div class="side-title">⚙️ Paramètres</div>
+        <div class="setting-row">
+            <span>Son par défaut</span>
+            <input type="checkbox" id="set-sound" onchange="saveSettings()">
+        </div>
+        <div class="setting-row">
+            <span>Scroll Auto (Fin)</span>
+            <input type="checkbox" id="set-autoscroll" onchange="saveSettings()">
+        </div>
     </div>
 
     <div class="main-content">
         <div class="nav">
-            <div class="logo">BUZZDASH</div>
+            <div class="logo-abs">BUZZDASH</div>
             <div class="btn-group">
                 <button id="b-long" class="btn active" onclick="changeMode('long')">Vidéos</button>
                 <button id="b-short" class="btn" onclick="changeMode('short')">Shorts</button>
@@ -83,52 +82,72 @@
     const API_KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs'; 
     let currentMode = 'long';
 
+    // Charger les paramètres sauvegardés
+    function loadSettings() {
+        document.getElementById('set-sound').checked = localStorage.getItem('buzz-sound') === 'true';
+        document.getElementById('set-autoscroll').checked = localStorage.getItem('buzz-auto') === 'true';
+    }
+
+    function saveSettings() {
+        localStorage.setItem('buzz-sound', document.getElementById('set-sound').checked);
+        localStorage.setItem('buzz-auto', document.getElementById('set-autoscroll').checked);
+    }
+
     async function loadContent(cat) {
         const vp = document.getElementById('viewport');
         vp.innerHTML = '<div style="padding:100px; text-align:center;">Chargement...</div>';
         
         try {
-            const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,id&chart=mostPopular&maxResults=15&regionCode=FR&videoCategoryId=${cat}&key=${API_KEY}`);
+            const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,id&chart=mostPopular&maxResults=10&regionCode=FR&videoCategoryId=${cat}&key=${API_KEY}`);
             const data = await res.json();
             vp.innerHTML = '';
 
-            data.items.forEach(item => {
+            data.items.forEach((item, index) => {
                 const slide = document.createElement('div');
                 slide.className = `slide ${currentMode === 'short' ? 'vertical' : ''}`;
+                const isMuted = !document.getElementById('set-sound').checked;
                 
                 slide.innerHTML = `
                     <div class="v-card">
-                        <iframe class="yt-video" src="https://www.youtube.com/embed/${item.id}?enablejsapi=1&rel=0&autoplay=0&mute=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        <iframe id="player-${index}" src="https://www.youtube.com/embed/${item.id}?enablejsapi=1&autoplay=0&mute=${isMuted ? 1 : 0}&rel=0" allow="autoplay; encrypted-media"></iframe>
                     </div>
                     <div class="v-info">
-                        <a href="https://www.youtube.com/channel/${item.snippet.channelId}" target="_blank" class="channel-link">
-                            ${item.snippet.channelTitle}
-                        </a>
-                        <p style="margin:5px 0; font-size:12px; color:#666;">Cliquer pour voir la chaîne</p>
+                        <a href="https://www.youtube.com/channel/${item.snippet.channelId}" target="_blank" class="channel">@${item.snippet.channelTitle}</a>
                     </div>
                 `;
                 vp.appendChild(slide);
             });
             setupObserver();
-        } catch (e) { console.error(e); }
+        } catch (e) { console.log(e); }
     }
 
     function setupObserver() {
-        const options = { threshold: 0.8 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const iframe = entry.target.querySelector('iframe');
                 if (entry.isIntersecting) {
                     iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                    // Si on veut du son, on essaie de démute (certains navigateurs bloqueront quand même sans clic)
+                    if(document.getElementById('set-sound').checked) {
+                        iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                    }
                 } else {
-                    // STOP TOTAL quand on quitte la slide
                     iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                 }
             });
-        }, options);
+        }, { threshold: 0.7 });
 
         document.querySelectorAll('.slide').forEach(s => observer.observe(s));
     }
+
+    // Détecter la fin d'une vidéo (via API postMessage simple)
+    window.onmessage = function(e) {
+        if (JSON.parse(e.data).event === 'onStateChange' && JSON.parse(e.data).info === 0) { // 0 = terminé
+            if(document.getElementById('set-autoscroll').checked) {
+                scrollMove(1);
+            }
+        }
+    };
 
     function changeMode(m) {
         currentMode = m;
@@ -141,6 +160,7 @@
         document.getElementById('viewport').scrollBy(0, window.innerHeight * d);
     }
 
+    loadSettings();
     loadContent(20);
 </script>
 </body>
