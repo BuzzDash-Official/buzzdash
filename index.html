@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuzzDash | Search Edition</title>
+    <title>BuzzDash | Trends & Search</title>
     
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4636323611777367" crossorigin="anonymous"></script>
 
@@ -14,22 +14,23 @@
 
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; overflow: hidden; display: flex; transition: 0.3s; }
         
+        /* Sidebar */
         .sidebar { width: 240px; height: 100vh; background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-top: 80px; z-index: 1001; }
-        .side-item { padding: 15px 25px; cursor: pointer; color: #888; }
-        .side-item.active { border-left: 4px solid var(--accent); color: var(--accent); background: rgba(0,123,255,0.05); }
-        .settings-header { padding: 15px 25px; cursor: pointer; border-top: 1px solid var(--border); margin-top: 20px; color: #aaa; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; }
+        .side-item { padding: 15px 25px; cursor: pointer; color: #888; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .side-item:hover { color: var(--accent); background: rgba(0,123,255,0.05); }
+        .side-item.active { border-left: 4px solid var(--accent); color: var(--accent); background: rgba(0,123,255,0.1); }
+        
+        .settings-header { padding: 15px 25px; cursor: pointer; border-top: 1px solid var(--border); margin-top: 10px; color: #aaa; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; }
         .settings-content { max-height: 0; overflow: hidden; transition: 0.3s; }
         .settings-content.open { max-height: 150px; }
         .set-row { padding: 10px 25px; display: flex; justify-content: space-between; font-size: 12px; }
 
-        /* Navigation avec Barre de Recherche */
+        /* Nav */
         .nav { height: 70px; display: flex; justify-content: space-between; align-items: center; background: var(--bg); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; border-bottom: 1px solid var(--border); padding: 0 30px; }
         .logo { font-weight: 900; color: var(--accent); font-size: 24px; text-shadow: 0 0 10px var(--accent); }
         
-        /* Style de la barre de recherche */
-        .search-container { flex: 1; max-width: 400px; margin: 0 20px; position: relative; }
-        .search-bar { width: 100%; background: #111; border: 1px solid var(--border); padding: 10px 15px; border-radius: 20px; color: white; font-family: inherit; outline: none; }
-        .search-bar:focus { border-color: var(--accent); }
+        .search-container { flex: 1; max-width: 400px; margin: 0 20px; }
+        .search-bar { width: 100%; background: #111; border: 1px solid var(--border); padding: 10px 15px; border-radius: 20px; color: white; outline: none; }
 
         .btn-group { display: flex; gap: 5px; background: rgba(128,128,128,0.1); padding: 5px; border-radius: 30px; border: 1px solid var(--border); }
         .btn { background: transparent; border: none; color: #888; padding: 10px 22px; border-radius: 30px; cursor: pointer; font-weight: bold; }
@@ -40,7 +41,7 @@
 
         .slide { height: 100vh; width: 100%; scroll-snap-align: start; scroll-snap-stop: always; display: flex; justify-content: center; align-items: center; position: relative; }
         
-        /* Zones Pubs */
+        /* Pubs */
         .ad { position: absolute; background: rgba(0,123,255,0.03); border: 1px dashed #444; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #555; border-radius: 8px; }
         .ad-top { width: 800px; height: 90px; top: 85px; }
         .ad-left { width: 160px; height: 600px; left: 40px; }
@@ -58,16 +59,17 @@
         .title { opacity: 0.7; font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .arrows { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 1100; }
-        .arrow { background: var(--side); border: 1px solid var(--border); color: var(--text); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 18px; }
+        .arrow { background: var(--side); border: 1px solid var(--border); color: var(--text); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
 
         @media (max-width: 1300px) { .ad-left, .ad-right { display: none; } }
-        @media (max-width: 1000px) { .sidebar, .search-container { display: none; } }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="side-item active">🏠 Accueil</div>
+        <div class="side-item active" onclick="resetToTrends()">🏠 Accueil</div>
+        <div class="side-item" onclick="resetToTrends()">🔥 Tendances</div>
+        
         <div class="settings-header" onclick="document.getElementById('set-panel').classList.toggle('open')">⚙️ PARAMÈTRES <span>▼</span></div>
         <div id="set-panel" class="settings-content">
             <div class="set-row"><span>Mode Clair</span> <input type="checkbox" id="p-light" onchange="toggleTheme()"></div>
@@ -78,7 +80,7 @@
     <div class="nav">
         <div class="logo">BUZZDASH</div>
         <div class="search-container">
-            <input type="text" id="searchInput" class="search-bar" placeholder="Rechercher une tendance..." onkeypress="handleSearch(event)">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Rechercher..." onkeypress="handleSearch(event)">
         </div>
         <div class="btn-group">
             <button id="b-20" class="btn active" onclick="changeMode(20)">Gaming</button>
@@ -98,10 +100,11 @@
     let currentPos = 0;
     let currentCat = 20;
 
-    function handleSearch(e) {
-        if (e.key === 'Enter') {
-            load(currentCat, e.target.value);
-        }
+    function handleSearch(e) { if (e.key === 'Enter') load(currentCat, e.target.value); }
+
+    function resetToTrends() {
+        document.getElementById('searchInput').value = "";
+        load(currentCat);
     }
 
     function navMove(dir) {
@@ -111,9 +114,7 @@
         vp.scrollTo({ top: currentPos, behavior: 'smooth' });
     }
 
-    function toggleTheme() {
-        document.body.classList.toggle('light-mode', document.getElementById('p-light').checked);
-    }
+    function toggleTheme() { document.body.classList.toggle('light-mode', document.getElementById('p-light').checked); }
 
     function changeMode(cat) {
         currentCat = cat;
@@ -125,26 +126,29 @@
 
     async function load(cat, query = "") {
         const vp = document.getElementById('viewport');
-        vp.innerHTML = '<div style="padding-top:200px; text-align:center;">Recherche en cours...</div>';
+        vp.innerHTML = '<div style="padding-top:200px; text-align:center; color:var(--accent);">Mise à jour du flux...</div>';
         
-        // Construction de l'URL de recherche YouTube
-        let url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&regionCode=FR&videoEmbeddable=true&type=video&videoCategoryId=${cat}&key=${KEY}`;
-        if (query) url += `&q=${encodeURIComponent(query)}`;
-        if (cat === 24) url += `&videoDuration=short`; // Force les vidéos courtes pour le mode Shorts
+        let url;
+        if (query) {
+            url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&regionCode=FR&type=video&videoCategoryId=${cat}&q=${encodeURIComponent(query)}&key=${KEY}`;
+            if (cat === 24) url += `&videoDuration=short`;
+        } else {
+            url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,id&chart=mostPopular&maxResults=25&regionCode=FR&videoCategoryId=${cat}&key=${KEY}`;
+        }
 
         try {
             const r = await fetch(url);
             const d = await r.json();
             vp.innerHTML = '';
             d.items.forEach(item => {
-                const videoId = item.id.videoId;
+                const videoId = item.id.videoId || item.id;
                 const v = item.snippet;
                 const s = document.createElement('div');
                 s.className = `slide ${cat === 24 ? 'vertical' : ''}`;
                 s.innerHTML = `
-                    <div class="ad ad-top">ZONE PUB HAUT</div>
-                    <div class="ad ad-left">PUB LATERALE</div>
-                    <div class="ad ad-right">PUB LATERALE</div>
+                    <div class="ad ad-top">PUB ADSENSE</div>
+                    <div class="ad ad-left">PUB ADSENSE</div>
+                    <div class="ad ad-right">PUB ADSENSE</div>
                     <div class="v-box">
                         <div class="v-card">
                             <iframe src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&mute=1" allow="autoplay; encrypted-media"></iframe>
@@ -157,7 +161,7 @@
                 vp.appendChild(s);
             });
             initObs();
-        } catch(e) { console.log("Erreur API"); }
+        } catch(e) { console.log("Erreur"); }
     }
 
     function initObs() {
@@ -166,7 +170,6 @@
                 const ifr = entry.target.querySelector('iframe');
                 if (entry.isIntersecting) {
                     ifr.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                    if(document.getElementById('p-son').checked) ifr.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
                 } else {
                     ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                 }
@@ -174,7 +177,6 @@
         }, { threshold: 0.8 });
         document.querySelectorAll('.slide').forEach(s => observer.observe(s));
     }
-
     load(20);
 </script>
 </body>
