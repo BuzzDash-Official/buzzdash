@@ -1,133 +1,614 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POPCORN STREAM - REPTILE EDITION</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --bg: #050505; --txt: #ffffff; --acc: #facc15; --side: #0d0d0d; }
-        body.light-mode { --bg: #f4f4f5; --txt: #18181b; --side: #ffffff; --acc: #eab308; }
-        
-        body { background: var(--bg); color: var(--txt); font-family: 'Inter', sans-serif; margin: 0; overflow: hidden; transition: 0.3s; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POPCORN STREAM</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0f;
+    --surface: #0f1219;
+    --surface2: #161c26;
+    --gold: #f5c842;
+    --gold2: #e8a020;
+    --red: #e8392a;
+    --text: #eaeaea;
+    --muted: #7a8499;
+    --border: rgba(255,255,255,0.06);
+    --sidebar: 240px;
+  }
 
-        /* --- INTRO CINÉMATIQUE VIOLETTE --- */
-        #intro { 
-            position: fixed; inset: 0; z-index: 9999; background: black; 
-            display: flex; justify-content: center; align-items: center; 
-            animation: fadeOut 0.8s forwards 5s; 
-            background: radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, rgba(0,0,0,1) 75%);
-        }
-        .m-pop { font-size: 110px; filter: drop-shadow(0 0 25px var(--acc)); position: relative; animation: swirl 1.5s ease-out; }
-        .m-eye { position: absolute; font-size: 45px; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); opacity: 0; animation: eyeIn 0.5s forwards 1.8s, blink 0.3s infinite 4s; }
-        .m-name { font-family: 'Syncopate'; font-size: 40px; color: var(--acc); opacity: 0; filter: blur(10px); animation: blurClear 1.2s forwards 2.8s; margin-left: 20px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        @keyframes swirl { from { transform: rotate(-180deg) scale(0); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
-        @keyframes eyeIn { to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-        @keyframes blink { 0%, 90%, 100% { transform: translate(-50%, -50%) scaleY(1); } 95% { transform: translate(-50%, -50%) scaleY(0.1); } }
-        @keyframes blurClear { to { opacity: 1; filter: blur(0); } }
-        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+  }
 
-        /* --- UI --- */
-        .sidebar { width: 260px; height: 100vh; position: fixed; left: 0; top: 0; background: var(--side); border-right: 1px solid rgba(255,255,255,0.05); padding: 30px; z-index: 100; display: flex; flex-column: column; }
-        .content { margin-left: 260px; padding: 110px 40px 40px; height: 100vh; overflow-y: auto; }
-        .topbar { position: fixed; top: 0; left: 260px; right: 0; height: 80px; background: var(--bg); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; padding: 0 40px; z-index: 50; }
-        
-        .card { background: rgba(128,128,128,0.1); border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+  /* ─── GRAIN TEXTURE ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
 
-        /* MENU PARAMÈTRES RÉPARÉ */
-        #settings-menu { display: none; background: rgba(128,128,128,0.05); border-radius: 8px; padding: 10px; margin-top: 10px; }
-        #settings-menu.open { display: block; }
-        
-        #modal { position: fixed; inset: 0; background: black; z-index: 2000; display: none; justify-content: center; align-items: center; }
-        #modal.active { display: flex; }
-    </style>
+  /* ─── INTRO ─── */
+  #intro {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    animation: introFade 0.7s ease-in forwards 4.5s;
+  }
+  #intro::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(245,200,66,0.12) 0%, transparent 70%);
+  }
+
+  .intro-curtain-left, .intro-curtain-right {
+    position: absolute; top: 0; width: 50%; height: 100%;
+    background: linear-gradient(to bottom, #0a0500, #1a0800, #0a0500);
+    z-index: 1;
+    animation: curtainOpen 1.2s cubic-bezier(0.77,0,0.18,1) forwards 0.3s;
+  }
+  .intro-curtain-left { left: 0; transform-origin: left; }
+  .intro-curtain-right { right: 0; transform-origin: right; }
+  .intro-curtain-left::after, .intro-curtain-right::after {
+    content: '';
+    position: absolute; top: 0; bottom: 0; width: 8px;
+    background: linear-gradient(to bottom, #8B0000, #cc3300, #8B0000);
+    box-shadow: 0 0 20px rgba(200,50,0,0.5);
+  }
+  .intro-curtain-left::after { right: 0; }
+  .intro-curtain-right::after { left: 0; }
+
+  @keyframes curtainOpen {
+    to { transform: scaleX(0); }
+  }
+
+  .intro-logo-wrap {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; gap: 20px;
+    animation: logoReveal 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards 1.8s;
+    opacity: 0; transform: scale(0.7);
+  }
+  @keyframes logoReveal { to { opacity: 1; transform: scale(1); } }
+
+  .intro-popcorn {
+    font-size: 90px;
+    filter: drop-shadow(0 0 30px rgba(245,200,66,0.6));
+    animation: popBounce 0.5s ease-out forwards 2.4s;
+    position: relative;
+  }
+  .intro-eye {
+    position: absolute; font-size: 36px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -52%) scale(0);
+    animation: eyePop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards 2.6s,
+               eyeBlink 0.25s ease-in-out infinite 3.4s;
+  }
+  @keyframes eyePop { to { transform: translate(-50%, -52%) scale(1); } }
+  @keyframes eyeBlink {
+    0%, 85%, 100% { transform: translate(-50%, -52%) scaleY(1); }
+    92% { transform: translate(-50%, -52%) scaleY(0.08); }
+  }
+  @keyframes popBounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15) rotate(-5deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  .intro-title {
+    display: flex; flex-direction: column;
+    line-height: 1;
+  }
+  .intro-title .big {
+    font-family: 'Bebas Neue'; font-size: 64px; color: var(--gold);
+    letter-spacing: 4px;
+    filter: drop-shadow(0 2px 20px rgba(245,200,66,0.4));
+  }
+  .intro-title .small {
+    font-family: 'Bebas Neue'; font-size: 36px; color: #fff;
+    letter-spacing: 8px; opacity: 0.7;
+  }
+
+  .intro-tagline {
+    position: absolute; bottom: 80px; z-index: 2;
+    font-size: 11px; letter-spacing: 4px; color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeIn 0.6s forwards 3.2s;
+  }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+  @keyframes introFade { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+
+  /* ─── SIDEBAR ─── */
+  #sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    z-index: 100;
+    display: flex; flex-direction: column;
+    padding: 28px 20px;
+    gap: 0;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 2px;
+    color: var(--gold); margin-bottom: 36px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo span { color: #fff; opacity: 0.5; font-size: 10px; display: block; letter-spacing: 3px; font-family: 'DM Sans'; margin-top: -4px; }
+
+  .nav-section { font-size: 9px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; margin-top: 20px; padding-left: 4px; }
+  
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px; cursor: pointer;
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    transition: all 0.2s; border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(245,200,66,0.12); color: var(--gold); }
+  .nav-item .icon { width: 20px; text-align: center; font-size: 15px; }
+
+  .sidebar-bottom { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
+  .theme-toggle { 
+    width: 100%; padding: 8px 12px; border-radius: 8px; 
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--muted); font-size: 12px; cursor: pointer; text-align: center;
+    transition: 0.2s; font-family: 'DM Sans';
+  }
+  .theme-toggle:hover { color: var(--text); border-color: var(--gold); }
+
+  /* ─── TOPBAR ─── */
+  #topbar {
+    position: fixed; top: 0; left: var(--sidebar); right: 0; height: 72px;
+    background: linear-gradient(to bottom, var(--bg) 60%, transparent);
+    z-index: 50;
+    display: flex; align-items: center; padding: 0 36px; gap: 20px;
+  }
+
+  .search-wrap {
+    flex: 1; max-width: 400px; position: relative;
+  }
+  .search-wrap input {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 9px 16px 9px 38px;
+    color: var(--text); font-size: 13px; font-family: 'DM Sans';
+    outline: none; transition: 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--gold); background: var(--surface2); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); pointer-events: none; }
+
+  .topbar-info { margin-left: auto; font-size: 11px; color: var(--muted); letter-spacing: 1px; }
+
+  /* ─── MAIN CONTENT ─── */
+  #main {
+    position: fixed; left: var(--sidebar); top: 0; right: 0; bottom: 0;
+    overflow-y: auto; padding: 90px 36px 40px;
+    scrollbar-width: thin; scrollbar-color: var(--surface2) transparent;
+  }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 14px; margin-bottom: 24px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue'; font-size: 30px; letter-spacing: 2px; color: var(--text);
+  }
+  .section-count {
+    font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  /* ─── HERO CARD (first video) ─── */
+  .hero-card {
+    position: relative; border-radius: 16px; overflow: hidden;
+    aspect-ratio: 21/8; cursor: pointer; margin-bottom: 40px;
+    group: true;
+  }
+  .hero-card img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s ease;
+    filter: brightness(0.7);
+  }
+  .hero-card:hover img { transform: scale(1.03); filter: brightness(0.85); }
+  .hero-card .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, rgba(8,10,15,0.85) 0%, transparent 60%),
+                linear-gradient(to top, rgba(8,10,15,0.6) 0%, transparent 50%);
+  }
+  .hero-info {
+    position: absolute; bottom: 0; left: 0; padding: 32px;
+  }
+  .hero-badge {
+    display: inline-block; background: var(--gold); color: #000;
+    font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 4px; margin-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue'; font-size: 38px; letter-spacing: 2px;
+    line-height: 1; margin-bottom: 14px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+  }
+  .hero-play {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--gold); color: #000;
+    font-size: 13px; font-weight: 700; padding: 10px 22px; border-radius: 8px;
+    border: none; cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans'; letter-spacing: 0.5px;
+  }
+  .hero-play:hover { background: #fff; transform: scale(1.03); }
+
+  /* ─── VIDEO GRID ─── */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+  }
+
+  .video-card {
+    border-radius: 10px; overflow: hidden; cursor: pointer;
+    background: var(--surface);
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+  }
+  .video-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,0.5); }
+  .video-card:hover .thumb-overlay { opacity: 1; }
+
+  .thumb-wrap { position: relative; aspect-ratio: 16/9; overflow: hidden; }
+  .thumb-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; display: block; }
+  .video-card:hover .thumb-wrap img { transform: scale(1.05); }
+  .thumb-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: 0.25s;
+  }
+  .play-btn {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(245,200,66,0.95); display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transform: scale(0.8); transition: transform 0.2s;
+    box-shadow: 0 4px 20px rgba(245,200,66,0.4);
+  }
+  .video-card:hover .play-btn { transform: scale(1); }
+  .play-btn::after { content: '▶'; margin-left: 3px; color: #000; }
+
+  .card-duration {
+    position: absolute; bottom: 6px; right: 8px;
+    background: rgba(0,0,0,0.8); color: #fff;
+    font-size: 10px; padding: 2px 5px; border-radius: 3px; font-weight: 500;
+  }
+
+  .card-body { padding: 12px 14px 14px; }
+  .card-title { font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--text); margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-meta { font-size: 11px; color: var(--muted); }
+
+  /* ─── LOADING ─── */
+  .loading-wrap {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 80px 0; gap: 16px;
+  }
+  .loader {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 3px solid var(--surface2); border-top-color: var(--gold);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--muted); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* ─── ERROR ─── */
+  .error-box {
+    padding: 24px; background: rgba(232,57,42,0.1); border: 1px solid rgba(232,57,42,0.3);
+    border-radius: 12px; color: #f87171; font-size: 13px; text-align: center;
+  }
+
+  /* ─── MODAL PLAYER ─── */
+  #modal {
+    position: fixed; inset: 0; z-index: 3000;
+    background: rgba(0,0,0,0);
+    display: none; align-items: center; justify-content: center;
+    transition: background 0.3s;
+    backdrop-filter: blur(0px);
+  }
+  #modal.active {
+    display: flex;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(12px);
+    animation: modalIn 0.3s ease forwards;
+  }
+  @keyframes modalIn { from { background: rgba(0,0,0,0); } to { background: rgba(0,0,0,0.92); } }
+
+  .modal-inner {
+    width: 90%; max-width: 1060px;
+    animation: scaleIn 0.35s cubic-bezier(0.34,1.2,0.64,1) forwards;
+  }
+  @keyframes scaleIn { from { transform: scale(0.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px; padding: 0 4px;
+  }
+  .modal-title { font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 2px; color: var(--text); }
+  .modal-close {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); width: 36px; height: 36px; border-radius: 50%;
+    cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
+  }
+  .modal-close:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+  .player-wrap {
+    aspect-ratio: 16/9; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 0 1px var(--border);
+  }
+  .player-wrap iframe { width: 100%; height: 100%; display: block; border: none; }
+
+  /* ─── CINEMA LIGHT EFFECT ─── */
+  .cinema-spotlight {
+    position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse at top, rgba(245,200,66,0.04) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+</style>
 </head>
 <body>
 
-    <div id="intro">
-        <div class="m-pop">🍿<div class="m-eye">👁️</div></div>
-        <div class="m-name">Popcorn<br><span style="color:white">Stream</span></div>
+<!-- SPOTLIGHT AMBIANCE -->
+<div class="cinema-spotlight"></div>
+
+<!-- ══════════════ INTRO ══════════════ -->
+<div id="intro">
+  <div class="intro-curtain-left"></div>
+  <div class="intro-curtain-right"></div>
+
+  <div class="intro-logo-wrap">
+    <div class="intro-popcorn">🍿<div class="intro-eye">👁️</div></div>
+    <div class="intro-title">
+      <span class="big">Popcorn</span>
+      <span class="small">Stream</span>
     </div>
+  </div>
 
-    <aside class="sidebar flex flex-col justify-between">
-        <div>
-            <h1 class="text-xl font-black text-yellow-500 mb-10 italic">POPCORN STREAM</h1>
-            <nav class="space-y-4 font-bold text-gray-400">
-                <button onclick="displayManual('ALUNE')" class="w-full text-left hover:text-yellow-500">🔥 À LA UNE</button>
-                <button onclick="loadRSS('UC_7PruREHpxn-A87A-D-5_A', '🎞️ BANDES-ANNONCES')" class="w-full text-left hover:text-yellow-500">🎞️ ACTION / TRAILERS</button>
-                <button onclick="loadRSS('UCwI-JbGNsojunnHbFAc0M4Q', '🌍 DOCUMENTAIRES')" class="w-full text-left hover:text-yellow-500">🌍 DOCUMENTAIRES</button>
-            </nav>
-        </div>
+  <p class="intro-tagline">Plateforme éducative — Contenu YouTube sélectionné</p>
+</div>
 
-        <div>
-            <button onclick="toggleSettings()" class="w-full text-left text-[11px] font-black opacity-50 hover:opacity-100 transition">⚙️ PARAMÈTRES ▼</button>
-            <div id="settings-menu" class="text-[10px] space-y-2">
-                <div class="flex justify-between"><span>PAYS :</span><b class="text-yellow-500">FRANCE</b></div>
-                <button onclick="toggleTheme()" id="themeBtn" class="w-full bg-yellow-500 text-black font-bold py-1 rounded mt-2 uppercase">Mode Lumière</button>
-            </div>
-        </div>
-    </aside>
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<aside id="sidebar">
+  <div class="logo">
+    🍿 POPCORN<br>
+    <span>STREAM EDU</span>
+  </div>
 
-    <header class="topbar">
-        <input type="text" id="search" placeholder="Kaizen, Inoxtag..." class="w-full max-w-lg bg-white/5 border border-white/10 rounded-lg px-5 py-2 outline-none focus:border-yellow-500">
-    </header>
+  <div class="nav-section">Navigation</div>
 
-    <main class="content">
-        <h2 id="title" class="text-3xl font-black mb-10 italic uppercase">Chargement...</h2>
-        <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
-    </main>
+  <button class="nav-item active" id="btn-home" onclick="activateNav(this); displayManual('ALUNE')">
+    <span class="icon">🔥</span> À la une
+  </button>
 
-    <div id="modal">
-        <button onclick="closeP()" class="absolute top-5 right-5 text-white border px-4 py-1 rounded-full">X</button>
-        <div class="w-[90%] max-w-5xl aspect-video"><iframe id="player" width="100%" height="100%" frameborder="0" allowfullscreen></iframe></div>
+  <div class="nav-section">Catégories</div>
+
+  <!-- 🌍 DOCUMENTAIRES : ARTE (chaîne officielle, 4.7M abonnés, docs variés) -->
+  <button class="nav-item" onclick="activateNav(this); loadRSS('UCwI-JbGNsojunnHbFAc0M4Q', 'Documentaires — ARTE')">
+    <span class="icon">🌍</span> Documentaires (ARTE)
+  </button>
+
+  <!-- 🔬 SCIENCE : Science Étonnante (1.3M abonnés, physique/maths/bio) -->
+  <button class="nav-item" onclick="activateNav(this); loadRSS('UCaNlbnghtwlsGF-KzAFThqA', 'Science — Science Étonnante')">
+    <span class="icon">🔬</span> Science & Nature
+  </button>
+
+  <!-- 🚀 ESPACE : AstronoGeek (1M abonnés, astronomie, vulgarisation) -->
+  <button class="nav-item" onclick="activateNav(this); loadRSS('UC5X4e8ScZI2AFd_vkjSoyoQ', 'Espace & Univers — AstronoGeek')">
+    <span class="icon">🚀</span> Espace & Univers
+  </button>
+
+  <!-- 🎓 CULTURE GÉN. : Nota Bene (histoire, 2.4M abonnés) -->
+  <button class="nav-item" onclick="activateNav(this); loadRSS('UCqnbDFdCpuN8CMEg0VuEBqA', 'Culture Générale — Nota Bene')">
+    <span class="icon">🎓</span> Culture Générale
+  </button>
+
+  <!-- 🎒 AVENTURE : Inoxtag / Kaizen (aventure/exploration, jeune public) -->
+  <button class="nav-item" onclick="activateNav(this); loadRSS('UC_7PruREHpxn-A87A-D-5_A', 'Aventure & Exploration')">
+    <span class="icon">🎒</span> Aventure & Exploration
+  </button>
+
+  <div class="sidebar-bottom">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️ Mode Clair</button>
+  </div>
+</aside>
+
+<!-- ══════════════ TOPBAR ══════════════ -->
+<header id="topbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Rechercher une vidéo..." oninput="filterCards(this.value)">
+  </div>
+  <div class="topbar-info">✦ CONTENU ÉDUCATIF SÉCURISÉ</div>
+</header>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main id="main">
+  <div id="section-header" class="section-header">
+    <h2 class="section-title" id="section-title">À LA UNE</h2>
+    <span class="section-count" id="section-count"></span>
+  </div>
+  <div id="hero-zone"></div>
+  <div id="grid" class="video-grid"></div>
+</main>
+
+<!-- ══════════════ PLAYER MODAL ══════════════ -->
+<div id="modal">
+  <div class="modal-inner">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Lecture</span>
+      <button class="modal-close" onclick="closePlayer()">✕</button>
     </div>
+    <div class="player-wrap">
+      <iframe id="player" src="" allowfullscreen allow="autoplay; fullscreen"></iframe>
+    </div>
+  </div>
+</div>
 
-    <script>
-        // DONNÉES MANUELLES
-        const lib = { ALUNE: [{ id: "O-2u2CscyU0", title: "KAIZEN - 1 an pour gravir l'Everest" }, { id: "p0Z-9Q_jM2Y", title: "Inoxtag : Nouveau départ" }] };
+<script>
+  // ─── DONNÉES À LA UNE ───
+  const ALUNE = [
+    { id: "O-2u2CscyU0", title: "KAIZEN — 1 an pour gravir l'Everest" },
+    { id: "p0Z-9Q_jM2Y", title: "Inoxtag : Nouveau Départ" },
+    { id: "PCMrUGqH6fQ", title: "La face cachée des océans" },
+    { id: "7Xfk9CN6S4E", title: "L'univers en 1 heure — Le meilleur documentaire" },
+    { id: "mOpQ-pFbpE8", title: "NASA : Les mystères de Mars" },
+    { id: "Bg_Q7KJET0", title: "Intelligence Artificielle : Le futur est maintenant" },
+  ];
 
-        // FONCTION RSS (Zéro Quota - ÇA MARCHE !)
-        async function loadRSS(id, label) {
-            const grid = document.getElementById('grid');
-            document.getElementById('title').innerText = label;
-            grid.innerHTML = "<p class='col-span-full text-center py-20 animate-pulse text-yellow-500'>Veuillez patienter...</p>";
-            
-            try {
-                const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id='+id)}&api_key=oyny6qvxz0v4mcznrtq3qf7zpsm8v0n6jdf3m5bw`);
-                const data = await res.json();
-                grid.innerHTML = "";
-                data.items.forEach(v => {
-                    const vid = v.link.split('v=')[1];
-                    grid.innerHTML += `<div class="card" onclick="openP('${vid}')"><img src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" class="w-full"><div class="p-4 font-bold text-sm">${v.title}</div></div>`;
-                });
-            } catch(e) { grid.innerHTML = "<p class='text-red-500 text-center col-span-full'>Erreur de chargement des vidéos.</p>"; }
-        }
+  // ─── RSP2JSON API ───
+  const RSS_API = 'https://api.rss2json.com/v1/api.json?api_key=oyny6qvxz0v4mcznrtq3qf7zpsm8v0n6jdf3m5bw&rss_url=';
 
-        function displayManual(cat) {
-            const grid = document.getElementById('grid');
-            document.getElementById('title').innerText = "À LA UNE";
-            grid.innerHTML = "";
-            lib[cat].forEach(v => {
-                grid.innerHTML += `<div class="card" onclick="openP('${v.id}')"><img src="https://img.youtube.com/vi/${v.id}/maxresdefault.jpg" class="w-full"><div class="p-4 font-bold text-sm">${v.title}</div></div>`;
-            });
-        }
+  // ─── ACTIVE NAV ───
+  function activateNav(btn) {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
 
-        // PARAMÈTRES RÉPARÉS
-        function toggleSettings() { document.getElementById('settings-menu').classList.toggle('open'); }
-        
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            document.getElementById('themeBtn').innerText = isLight ? "Mode Sombre" : "Mode Lumière";
-        }
+  // ─── HERO CARD ───
+  function renderHero(vid, title) {
+    const zone = document.getElementById('hero-zone');
+    zone.innerHTML = `
+      <div class="hero-card" onclick="openPlayer('${vid}','${title.replace(/'/g,"\\'")}')">
+        <img src="https://img.youtube.com/vi/${vid}/maxresdefault.jpg" alt="${title}" onerror="this.src='https://img.youtube.com/vi/${vid}/hqdefault.jpg'">
+        <div class="hero-overlay"></div>
+        <div class="hero-info">
+          <span class="hero-badge">✦ À la une</span>
+          <div class="hero-title">${title}</div>
+          <button class="hero-play">▶ &nbsp;Regarder</button>
+        </div>
+      </div>`;
+  }
 
-        function openP(id) { document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1`; document.getElementById('modal').classList.add('active'); }
-        function closeP() { document.getElementById('player').src = ""; document.getElementById('modal').classList.remove('active'); }
+  // ─── CARD FACTORY ───
+  function makeCard(vid, title, meta = '') {
+    return `
+      <div class="video-card" onclick="openPlayer('${vid}','${title.replace(/'/g,"\\'")}')">
+        <div class="thumb-wrap">
+          <img src="https://img.youtube.com/vi/${vid}/mqdefault.jpg" alt="${title}" 
+               onerror="this.src='https://img.youtube.com/vi/${vid}/hqdefault.jpg'">
+          <div class="thumb-overlay"><div class="play-btn"></div></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${title}</div>
+          ${meta ? `<div class="card-meta">${meta}</div>` : ''}
+        </div>
+      </div>`;
+  }
 
-        setTimeout(() => displayManual('ALUNE'), 5500);
-    </script>
+  // ─── DISPLAY MANUEL ───
+  function displayManual(cat) {
+    document.getElementById('section-title').textContent = 'À LA UNE';
+    document.getElementById('section-count').textContent = '';
+    const [hero, ...rest] = ALUNE;
+    renderHero(hero.id, hero.title);
+    const grid = document.getElementById('grid');
+    grid.innerHTML = rest.map(v => makeCard(v.id, v.title)).join('');
+  }
+
+  // ─── LOAD RSS ───
+  async function loadRSS(channelId, label) {
+    document.getElementById('section-title').textContent = label.toUpperCase();
+    document.getElementById('section-count').textContent = '';
+    document.getElementById('hero-zone').innerHTML = '';
+    const grid = document.getElementById('grid');
+    grid.innerHTML = `<div class="loading-wrap" style="grid-column:1/-1"><div class="loader"></div><div class="loading-text">Chargement en cours...</div></div>`;
+
+    try {
+      const url = RSS_API + encodeURIComponent(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Network error');
+      const data = await res.json();
+
+      if (!data.items || data.items.length === 0) throw new Error('Aucune vidéo trouvée');
+
+      const items = data.items;
+      document.getElementById('section-count').textContent = `${items.length} vidéos`;
+
+      // Hero = premier
+      const first = items[0];
+      const firstId = extractId(first.link);
+      renderHero(firstId, first.title);
+
+      // Reste = grille
+      grid.innerHTML = items.slice(1).map(v => {
+        const vid = extractId(v.link);
+        const date = new Date(v.pubDate).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' });
+        return makeCard(vid, v.title, date);
+      }).join('');
+
+    } catch(err) {
+      grid.innerHTML = `<div class="error-box" style="grid-column:1/-1">
+        ⚠️ Impossible de charger les vidéos.<br>
+        <small style="opacity:0.7;margin-top:6px;display:block">${err.message}</small>
+      </div>`;
+    }
+  }
+
+  function extractId(link) {
+    const match = link.match(/[?&]v=([^&]+)/) || link.match(/youtu\.be\/([^?]+)/);
+    return match ? match[1] : '';
+  }
+
+  // ─── PLAYER ───
+  let allCards = [];
+
+  function openPlayer(id, title) {
+    document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePlayer() {
+    document.getElementById('player').src = '';
+    document.getElementById('modal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closePlayer();
+  });
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePlayer(); });
+
+  // ─── SEARCH ───
+  function filterCards(query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('.video-card').forEach(card => {
+      const title = card.querySelector('.card-title').textContent.toLowerCase();
+      card.style.display = title.includes(q) ? '' : 'none';
+    });
+  }
+
+  // ─── THEME ───
+  function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    document.getElementById('themeBtn').textContent = isLight ? '🌙 Mode Sombre' : '☀️ Mode Clair';
+  }
+
+  // ─── LIGHT MODE CSS ───
+  const lightCSS = `
+    body.light-mode { --bg: #f0f2f5; --surface: #ffffff; --surface2: #e8eaed; --text: #1a1c20; --muted: #6b7280; --border: rgba(0,0,0,0.08); }
+  `;
+  const style = document.createElement('style');
+  style.textContent = lightCSS;
+  document.head.appendChild(style);
+
+  // ─── INIT ───
+  setTimeout(() => displayManual('ALUNE'), 5000);
+</script>
 </body>
 </html>
