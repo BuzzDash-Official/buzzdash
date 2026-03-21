@@ -3,154 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BuzzDash | Pro Edition</title>
+    <title>BuzzDash | Centrage Parfait</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        /* Variables de thèmes */
-        :root { --accent: #9d00ff; --bg: #000000; --side: #050505; --text: #ffffff; --nav: rgba(0,0,0,0.95); --border: #1a1a1a; }
-        .light-mode { --bg: #f0f0f0; --side: #ffffff; --text: #000000; --nav: rgba(255,255,255,0.95); --border: #dddddd; }
-
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; overflow: hidden; display: flex; transition: 0.3s; }
+        :root { --accent: #9d00ff; --bg: #000000; --side: #080808; --nav-h: 70px; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Poppins', sans-serif; overflow: hidden; display: flex; }
         
-        /* Sidebar */
-        .sidebar { width: 240px; height: 100vh; background: var(--side); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding-top: 80px; z-index: 1001; }
-        .side-item { padding: 15px 25px; cursor: pointer; color: #888; font-size: 15px; }
-        .side-item.active { border-left: 4px solid var(--accent); color: var(--accent); background: rgba(157, 0, 255, 0.05); }
-        .settings-header { padding: 15px 25px; cursor: pointer; border-top: 1px solid var(--border); margin-top: 20px; color: #888; display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; }
-        .settings-content { max-height: 0; overflow: hidden; transition: 0.3s; background: rgba(0,0,0,0.05); }
-        .settings-content.open { max-height: 150px; }
-        .set-row { padding: 10px 25px; display: flex; justify-content: space-between; font-size: 12px; }
+        /* Barre Latérale */
+        .sidebar { width: 220px; height: 100vh; background: var(--side); border-right: 1px solid #1a1a1a; display: flex; flex-direction: column; padding-top: 80px; box-sizing: border-box; }
+        .side-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 15px; color: #888; transition: 0.2s; }
+        .side-item:hover, .side-item.active { background: #111; color: white; }
+        .side-item.active { border-left: 4px solid var(--accent); color: var(--accent); }
 
-        /* Navigation centrée */
-        .nav { height: 70px; display: flex; justify-content: center; align-items: center; background: var(--nav); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; border-bottom: 1px solid var(--border); }
-        .logo-left { position: absolute; left: 30px; font-weight: 900; color: var(--accent); font-size: 24px; text-shadow: 0 0 10px var(--accent); }
-        .btn-group { display: flex; gap: 5px; background: rgba(128,128,128,0.1); padding: 5px; border-radius: 30px; border: 1px solid var(--border); }
-        .btn { background: transparent; border: none; color: #888; padding: 10px 22px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+        /* Contenu Principal - CORRECTION ICI */
+        .main-content { flex: 1; height: 100vh; position: relative; margin-left: 0; /* Important */ }
+        
+        /* Nav centrée et néon */
+        .nav { height: var(--nav-h); display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); position: fixed; top: 0; left: 220px; right: 0; z-index: 1000; border-bottom: 1px solid #1a1a1a; }
+        .logo-abs { position: absolute; left: 30px; font-weight: 900; color: var(--accent); font-size: 26px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 15px var(--accent); }
+        
+        /* Groupes de boutons violets */
+        .btn-group { display: flex; gap: 5px; background: #080808; padding: 5px; border-radius: 30px; border: 1px solid #1a1a1a; }
+        .btn { background: transparent; border: none; color: #666; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; transition: 0.3s; }
         .btn.active { background: var(--accent); color: white; box-shadow: 0 0 15px var(--accent); }
 
-        /* Viewport */
-        #viewport { flex: 1; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; }
+        /* Viewport ultra-fluide avec CORRECTION DU CENTRAGE HORIZONTAL */
+        #viewport { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; display: flex; flex-direction: column; align-items: center; /* FORCES HORIZONTAL CENTER */ }
         #viewport::-webkit-scrollbar { display: none; }
 
-        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 70px; box-sizing: border-box; }
+        .slide { height: 100vh; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding-top: calc(var(--nav-h) + 10px); box-sizing: border-box; }
         
-        .v-container { width: 95%; max-width: 1100px; display: flex; flex-direction: column; }
-        .vertical .v-container { max-width: 450px; }
-
-        .v-card { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-        .vertical .v-card { aspect-ratio: 9/16; height: 75vh; }
+        /* CADRAGE PARFAIT & GRAND & CENTRÉ */
+        .v-wrapper { width: 90%; max-width: 950px; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid #1a1a1a; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .vertical .v-wrapper { max-width: 420px; height: 88vh; aspect-ratio: unset; } /* Cadre Shorts Géant */
+        
         iframe { width: 100%; height: 100%; border: none; }
 
-        .v-footer { width: 100%; margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .pseudo { color: var(--accent); font-weight: 900; font-size: 18px; }
-        .title { color: var(--text); font-size: 14px; flex: 1; text-align: right; margin-left: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.8; }
+        /* Infos Youtubeur simplifiées */
+        .v-info { width: 90%; max-width: 950px; margin-top: 10px; text-align: left; padding: 0 10px; }
+        .channel-name { font-weight: 700; color: var(--accent); text-decoration: none; font-size: 17px; }
+        .channel-name:hover { text-decoration: underline; }
 
-        /* Zone Pub (AdSense Placeholder) */
-        .ad-zone { width: 100%; height: 90px; background: rgba(128,128,128,0.05); margin-bottom: 10px; border: 1px dashed #555; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #555; border-radius: 8px; }
-
-        .nav-arrows { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; }
-        .arrow { background: var(--side); border: 1px solid var(--border); color: var(--text); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+        /* Flèches de navigation */
+        .nav-arrows { position: fixed; right: 30px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 100; }
+        .arrow { background: rgba(255,255,255,0.05); border: 1px solid #222; color: white; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: 0.3s; }
+        .arrow:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 15px var(--accent); }
         
-        @media (max-width: 1000px) { .sidebar, .logo-left { display: none; } .nav { left: 0; } }
+        @media (max-width: 900px) { .sidebar { display: none; } .nav { left: 0; } .nav-arrows { display: none; } }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <div class="side-item active">🏠 Accueil</div>
-        <div class="settings-header" onclick="document.getElementById('set-panel').classList.toggle('open')">⚙️ PARAMÈTRES <span>▼</span></div>
-        <div id="set-panel" class="settings-content">
-            <div class="set-row"><span>Son Auto</span> <input type="checkbox" id="pref-s" onchange="saveP()"></div>
-            <div class="set-row"><span>Mode Clair</span> <input type="checkbox" id="pref-light" onchange="toggleTheme()"></div>
-        </div>
     </div>
 
     <div class="main-content">
         <div class="nav">
-            <div class="logo-left">BUZZDASH</div>
+            <div class="logo-abs">BUZZDASH</div>
             <div class="btn-group">
-                <button id="b-20" class="btn active" onclick="changeMode(20)">Gaming</button>
-                <button id="b-24" class="btn" onclick="changeMode(24)">Shorts</button>
+                <button id="b-gaming" class="btn active" onclick="changeMode('gaming')">Gaming</button>
+                <button id="b-shorts" class="btn" onclick="changeMode('shorts')">Shorts</button>
             </div>
         </div>
 
         <div class="nav-arrows">
-            <button class="arrow" onclick="scrollV(-1)">↑</button>
-            <button class="arrow" onclick="scrollV(1)">↓</button>
+            <button class="arrow" onclick="scrollBy(0, -window.innerHeight)">↑</button>
+            <button class="arrow" onclick="scrollBy(0, window.innerHeight)">↓</button>
         </div>
 
         <div id="viewport"></div>
     </div>
 
 <script>
-    const KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs';
-    let currentMode = 20;
+    // METS BIEN TA CLÉ CI-DESSOUS
+    const API_KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs'; 
+    let currentMode = 'gaming';
 
-    function saveP() { localStorage.setItem('bz-son', document.getElementById('pref-s').checked); }
-
-    function toggleTheme() {
-        const isLight = document.getElementById('pref-light').checked;
-        document.body.classList.toggle('light-mode', isLight);
-        localStorage.setItem('bz-light', isLight);
-    }
-
-    function scrollV(d) { document.getElementById('viewport').scrollBy(0, window.innerHeight * d); }
-
-    async function load(cat) {
-        const vp = document.getElementById('viewport');
-        vp.innerHTML = '<div style="text-align:center; padding-top:150px;">Chargement...</div>';
+    async function loadContent(catId) {
+        const container = document.getElementById('viewport');
+        container.innerHTML = '<p style="text-align:center; padding-top:100px;">Chargement du flux néon...</p>';
+        
         try {
-            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,id&chart=mostPopular&maxResults=30&regionCode=FR&videoCategoryId=${cat}&key=${KEY}`);
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,id&chart=mostPopular&maxResults=15&regionCode=FR&videoCategoryId=${catId}&key=${API_KEY}`);
             const d = await r.json();
-            vp.innerHTML = '';
-
+            container.innerHTML = '';
+            
             d.items.forEach(v => {
+                // Filtre Shorts : on zappe les vidéos horizontales
+                if(currentMode === 'shorts' && v.contentDetails.definition === 'hd' && !v.snippet.title.toLowerCase().includes('short')) return;
+
                 const s = document.createElement('div');
-                s.className = `slide ${cat === 24 ? 'vertical' : ''}`;
+                s.className = `slide ${currentMode === 'shorts' ? 'vertical' : ''}`;
                 s.innerHTML = `
-                    <div class="v-container">
-                        <div class="ad-zone">ESPACE PUBLICITAIRE ADSENSE</div>
-                        <div class="v-card">
-                            <iframe src="https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&mute=1" allow="autoplay; encrypted-media"></iframe>
-                        </div>
-                        <div class="v-footer">
-                            <div class="pseudo">@${v.snippet.channelTitle}</div>
-                            <div class="title">${v.snippet.title}</div>
-                        </div>
+                    <div class="v-wrapper">
+                        <iframe class="yt-player" src="https://www.youtube.com/embed/${v.id}?enablejsapi=1&autoplay=0&mute=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media"></iframe>
+                    </div>
+                    <div class="v-info">
+                        <a href="https://www.youtube.com/channel/${v.snippet.channelId}" target="_blank" class="channel-name">@${v.snippet.channelTitle}</a>
                     </div>`;
-                vp.appendChild(s);
+                container.appendChild(s);
             });
-            initObs();
-        } catch(e) { console.error(e); }
+            startObserving();
+        } catch (e) { alert("Erreur API YouTube."); }
     }
 
-    function initObs() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const ifr = entry.target.querySelector('iframe');
-                if (entry.isIntersecting) {
-                    ifr.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-                    if(document.getElementById('pref-s').checked) ifr.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
-                } else {
-                    ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                }
-            });
-        }, { threshold: 0.6 });
-        document.querySelectorAll('.slide').forEach(s => observer.observe(s));
+    // Gestion du Son Simplifiée
+    function startObserving() {
+        // On attend que les iframes chargent un peu
+        setTimeout(() => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const iframe = entry.target.querySelector('iframe');
+                    if (entry.isIntersecting) {
+                        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                        // On n'active le son qu'après un premier clic sur la page (loi navigateur)
+                    } else {
+                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                        iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
+                    }
+                });
+            }, { threshold: 0.6 }); // Déclenche à 60% de visibilité
+
+            document.querySelectorAll('.slide').forEach(s => observer.observe(s));
+        }, 1000);
     }
 
-    function changeMode(c) {
-        document.getElementById('b-20').classList.toggle('active', c === 20);
-        document.getElementById('b-24').classList.toggle('active', c === 24);
-        load(c);
+    function changeMode(mode) {
+        currentMode = mode;
+        document.getElementById('b-gaming').classList.toggle('active', mode === 'gaming');
+        document.getElementById('b-shorts').classList.toggle('active', mode === 'shorts');
+        loadContent(mode === 'gaming' ? 20 : 24);
     }
 
-    window.onload = () => {
-        document.getElementById('pref-s').checked = localStorage.getItem('bz-son') === 'true';
-        document.getElementById('pref-light').checked = localStorage.getItem('bz-light') === 'true';
-        if(localStorage.getItem('bz-light') === 'true') document.body.classList.add('light-mode');
-        load(20);
-    };
+    // Premier chargement
+    loadContent(20);
+
+    // Patch pour gérer le changement de son via un clic utilisateur (obligatoire pour autoplay)
+    window.addEventListener('click', () => {
+        const activeSlide = document.querySelector('.slide:nth-child(' + (Math.round(document.getElementById('viewport').scrollTop / window.innerHeight) + 1) + ')');
+        if(activeSlide) {
+            const iframe = activeSlide.querySelector('iframe');
+            iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+        }
+    }, { once: true }); // Ne s'exécute qu'une fois
 </script>
 </body>
 </html>
