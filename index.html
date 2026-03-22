@@ -3,91 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MonEmpireAuto | Business Architect</title>
+    <title>THE ORACLE | MonEmpireAuto v7.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050505; color: white; overflow-x: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
-        .gradient-bg { background: radial-gradient(circle at top right, #1e3a8a 0%, #000 50%); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-pop { animation: fadeIn 0.5s ease-out forwards; }
+        :root { --gold: #f59e0b; --dark: #000000; --deep: #0a0a0a; }
+        body { font-family: 'Space Grotesk', sans-serif; background-color: var(--dark); color: white; overflow-x: hidden; }
+        .gold-text { background: linear-gradient(to right, #f59e0b, #fffbeb, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .ancient-font { font-family: 'Cinzel Decorative', cursive; }
+        
+        /* Effet Mascotte Illuminati Pyramide */
+        #mascot { position: fixed; top: 10px; right: 20px; font-size: 5rem; color: var(--gold); filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.5)); animation: pulseMascot 3s infinite ease-in-out; cursor: help; }
+        @keyframes pulseMascot { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1) rotate(5deg); } }
+        #mascot-desc { position: fixed; top: 90px; right: 30px; background: var(--deep); border: 1px solid var(--gold); p: 3px 6px; border-radius: 4px; font-size: 0.7rem; color: var(--gold); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        #mascot:hover + #mascot-desc { opacity: 1; }
+
+        /* Effets CSS Avancés */
+        .glass-gold { background: rgba(245, 158, 11, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(245, 158, 11, 0.1); box-shadow: 0 0 30px rgba(245, 158, 11, 0.05); }
+        .btn-gold { background: linear-gradient(135deg, #f59e0b, #b45309); transition: 0.4s; position: relative; overflow: hidden; }
+        .btn-gold::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(transparent, rgba(255, 255, 255, 0.3), transparent); transform: rotate(45deg); animation: shineBtn 4s infinite; }
+        @keyframes shineBtn { from { left: -150%; } to { left: 150%; } }
+        
+        /* Animations */
+        @keyframes reveal { from { opacity: 0; transform: translateY(30px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .reveal-anim { animation: reveal 1s cubic-bezier(0.2, 1, 0.3, 1); }
+        .hidden-until-init { opacity: 0; pointer-events: none; transition: opacity 2s ease; }
+        .init-complete { opacity: 1; pointer-events: auto; }
     </style>
 </head>
-<body class="gradient-bg min-h-screen">
+<body>
 
-    <div class="max-w-5xl mx-auto px-6 py-12">
-        <nav class="flex justify-between items-center mb-16">
-            <div class="text-xl font-extrabold tracking-tighter">MON<span class="text-blue-500">EMPIRE</span>AUTO</div>
-            <div class="hidden md:flex gap-6 text-sm text-gray-400 font-medium">
-                <a href="#" class="hover:text-white transition">Comment ça marche</a>
-                <a href="#" class="hover:text-white transition">Affiliation</a>
-                <a href="#" class="bg-white text-black px-4 py-2 rounded-full text-xs">Accès Premium</a>
-            </div>
-        </nav>
+    <div id="mascot" title="L'Oeil qui voit l'Avenir">👁️</div>
+    <div id="mascot-desc">L'Oracle du Profit Perpétuel</div>
 
-        <div class="text-center mb-12">
-            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
-                Arrêtez de deviner. <br><span class="text-blue-500 italic">Encaissez.</span>
-            </h1>
-            <p class="text-gray-400 text-lg max-w-xl mx-auto">L'IA qui analyse les marchés en temps réel pour vous bâtir une machine à cash personnalisée.</p>
-        </div>
-
-        <div class="max-w-2xl mx-auto mb-16">
-            <div class="glass p-2 rounded-3xl glow-blue flex flex-col md:flex-row gap-2">
-                <input id="user-input" class="bg-transparent flex-1 p-5 outline-none text-white placeholder-gray-600" placeholder="Ex: J'ai 500€ et je veux 3000€/mois...">
-                <button onclick="generer()" id="btn" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold transition-all transform active:scale-95">
-                    Générer l'Empire
-                </button>
-            </div>
-            <p id="error-msg" class="text-red-400 text-sm mt-3 text-center hidden">⚠️ Erreur de connexion. Vérifiez votre clé API.</p>
-        </div>
-
-        <div id="resultat" class="hidden space-y-8 animate-pop">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass p-8 rounded-3xl border-l-4 border-green-500">
-                    <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">Profit Estimé</p>
-                    <p id="gain" class="text-4xl font-black text-white"></p>
-                    <p class="text-green-500 text-sm mt-1">Net par mois</p>
-                </div>
-                <div class="glass p-8 rounded-3xl border-l-4 border-blue-500">
-                    <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">Difficulté</p>
-                    <p id="diff" class="text-4xl font-black text-white"></p>
-                    <div class="w-full bg-gray-800 h-2 rounded-full mt-4"><div id="diff-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div></div>
-                </div>
-                <div class="glass p-8 rounded-3xl border-l-4 border-purple-500">
-                    <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">Focus Quotidien</p>
-                    <p id="temps" class="text-4xl font-black text-white"></p>
-                    <p class="text-purple-400 text-sm mt-1">Automatisation possible</p>
-                </div>
-            </div>
-
-            <div class="glass p-10 rounded-[3rem] relative overflow-hidden">
-                <div class="relative z-10">
-                    <h2 class="text-3xl font-bold mb-8">Votre Plan d'Exécution : <span id="titre-biz" class="text-blue-500"></span></h2>
-                    <div id="plan" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-300">
-                        </div>
-                    <div class="mt-12 p-8 bg-blue-600 rounded-3xl flex flex-col md:flex-row items-center justify-between">
-                        <div>
-                            <p class="text-white font-bold text-xl">Prêt à lancer ?</p>
-                            <p class="text-blue-100 opacity-80">Nous avons préparé vos accès aux outils nécessaires.</p>
-                        </div>
-                        <a href="https://systeme.io?sa=tonid" class="mt-4 md:mt-0 bg-white text-blue-600 px-10 py-4 rounded-2xl font-black hover:bg-gray-100 transition">ACTIVER LES OUTILS →</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div id="intro-screen" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center gap-6 p-6 text-center">
+        <h1 class="ancient-font text-6xl gold-text tracking-widest animate-pulse">THE ORACLE</h1>
+        <p class="text-gray-600 text-sm max-w-sm">La Prévoyance n'est pas une chance. C'est un Algorithme. <br>Laissez-vous initier à la Richesse Future.</p>
+        <button onclick="initSequence()" class="btn-gold px-12 py-5 rounded-full font-bold uppercase tracking-widest text-sm mt-6 shadow-xl">Rejoindre le Cercle →</button>
     </div>
 
-    <script>
-        async function generer() {
-            const input = document.getElementById('user-input').value;
-            const key = "TA_CLE_GROQ_ICI"; // Remplace ici !
-            const btn = document.getElementById('btn');
+    <main id="main-content" class="hidden-until-init flex flex-col items-center px-4 md:px-10 pb-20">
+        
+        <nav class="w-full max-w-7xl py-10 flex justify-between items-center">
+            <div class="ancient-font text-2xl font-bold gold-text flex items-center gap-2">👁️ MON<span class="text-white">EMPIRE</span>AUTO</div>
+            <div class="text-xs uppercase tracking-widest font-black text-amber-900 border border-amber-900/40 p-2 px-4 rounded-md">Système Divin v7.0</div>
+        </nav>
+
+        <div class="max-w-4xl text-center mt-20 mb-20 reveal-anim">
+            <h1 class="ancient-font text-6xl md:text-8xl font-black mb-8 leading-none tracking-tighter">Prévoyez.<br><span class="gold-text italic">Puis Encaissez.</span></h1>
+            <p class="text-gray-500 text-xl font-light max-w-2xl mx-auto">L'IA qui détient la Vérité sur le Profit. Nous savons ce qui va payer demain. <br>Le secret est à votre portée. </p>
+        </div>
+
+        <div class="w-full max-w-2xl glass-gold p-3 rounded-full mb-28 reveal-anim">
+            <div class="flex flex-col md:flex-row gap-3">
+                <input id="user-input" class="bg-transparent flex-1 p-6 outline-none text-xl text-white placeholder-gray-700" placeholder="Décrivez votre situation (budget, talents)...">
+                <button onclick="genererPlan()" id="btn" class="btn-gold px-12 py-6 rounded-full font-bold uppercase text-xs tracking-widest shadow-2xl">Interroger l'Oracle</button>
+            </div>
+            <p id="error-msg" class="text-red-500 text-center text-sm mt-4 hidden">⚠️ L'Oracle est saturé. La prévoyance est instable. Vérifiez la clé de connexion.</p>
+        </div>
+
+        <div id="resultat" class="hidden w-full max-w-6xl reveal-anim space-y-12">
             
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="glass-gold p-10 rounded-3xl border border-gold/10 relative overflow-hidden">
+                        <p class="text-gray-600 text-xs font-bold uppercase tracking-widest mb-3">Profit Annoncé</p>
+                        <p id="gain" class="ancient-font text-5xl font-black text-white"></p>
+                        <p class="text-green-500 text-sm mt-2 font-bold italic">Net / Mois</p>
+                    </div>
+                    <div class="glass-gold p-10 rounded-3xl border border-gold/10 relative overflow-hidden">
+                        <p class="text-gray-600 text-xs font-bold uppercase tracking-widest mb-3">Initiation Requise</p>
+                        <p id="diff" class="ancient-font text-5xl font-black text-white"></p>
+                        <div class="w-full bg-amber-950 h-3 rounded-full mt-5 relative"><div id="diff-bar" class="bg-gold h-3 rounded-full" style="width: 0%"></div></div>
+                    </div>
+                    <div class="glass-gold p-10 rounded-3xl border border-gold/10 relative overflow-hidden">
+                        <p class="text-gray-600 text-xs font-bold uppercase tracking-widest mb-3">Point d'Avance</p>
+                        <p id="temps" class="ancient-font text-5xl font-black text-white"></p>
+                        <p class="text-gray-500 text-sm mt-2 font-light">Focus Quotidien</p>
+                    </div>
+                </div>
+
+                <div class="glass-gold p-12 rounded-[3rem] border border-gold/20 relative">
+                    <h2 class="ancient-font text-4xl font-bold mb-12 text-white flex gap-4 items-center"><span class="text-gold">Revelation :</span> <span id="titre-biz" class="tracking-widest"></span></h2>
+                    <div id="plan" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 text-gray-300 font-light text-lg">
+                        </div>
+                    
+                    <div class="mt-20 p-10 bg-gradient-to-r from-amber-950/40 to-black rounded-3xl border border-amber-900 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+                        <div>
+                            <h3 class="ancient-font text-2xl font-bold gold-text">Lancez l'Opération</h3>
+                            <p class="text-gray-500 max-w-sm mt-1">Nous avons sécurisé votre infrastructure technique.</p>
+                        </div>
+                        <a href="https://systeme.io?sa=tonid" class="btn-gold px-12 py-5 rounded-full font-black uppercase text-xs tracking-widest hover:scale-105 transition-transform">Activer les Outils →</a>
+                    </div>
+                </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Séquence d'initiation (Intro screen)
+        function initSequence() {
+            document.getElementById('intro-screen').style.opacity = '0';
+            setTimeout(() => { document.getElementById('intro-screen').style.display = 'none'; }, 2000);
+            setTimeout(() => { document.getElementById('main-content').classList.add('init-complete'); }, 500);
+        }
+
+        // Connexion à l'Oracle
+        async function genererPlan() {
+            const input = document.getElementById('user-input').value;
+            const btn = document.getElementById('btn');
+            const key = "TA_CLE_GROQ_ICI"; // Remplace ici ! 🔥
+
             if(!input) return;
-            btn.innerText = "IA en cours...";
+            btn.innerText = "Consultation...";
             btn.disabled = true;
 
             try {
@@ -97,7 +124,8 @@
                     body: JSON.stringify({
                         model: "llama3-8b-8192",
                         messages: [
-                            { role: "system", content: "Tu es un expert en business. Réponds UNIQUEMENT en JSON: {\"nom\":\"\",\"gain\":\"\",\"diff\":5,\"temps\":\"\",\"plan\":[\"\",\"\",\"\"]}" },
+                            { role: "system", content: `Tu es THE ORACLE de l'organisation MonEmpireAuto. Tu détiens la prévoyance sur le profit futur. Tu parles de façon initiatique, arrogante, précise et arrogante. Ton but est de révéler la vérité.
+                            RÉPONDS UNIQUEMENT EN JSON : {"nom":"","gain":"","diff":X (nombre/10),"temps":"","plan":["Reveler Etape 1","Reveler Etape 2","Reveler Etape 3"]}` },
                             { role: "user", content: input }
                         ],
                         response_format: { type: "json_object" }
@@ -112,17 +140,16 @@
                 document.getElementById('diff-bar').style.width = (res.diff * 10) + "%";
                 document.getElementById('temps').innerText = res.temps;
                 document.getElementById('plan').innerHTML = res.plan.map((e, i) => `
-                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5">
-                        <span class="text-blue-500 font-bold">0${i+1}.</span> ${e}
+                    <div class="flex gap-5 border border-white/5 p-6 rounded-2xl bg-black/40 shadow-inner">
+                        <span class="text-gold font-bold text-3xl ancient-font">0${i+1}</span>
+                        <p class="text-gray-300 font-light pt-1">${e}</p>
                     </div>
                 `).join('');
                 
                 document.getElementById('resultat').classList.remove('hidden');
                 document.getElementById('error-msg').classList.add('hidden');
-            } catch (e) { 
-                document.getElementById('error-msg').classList.remove('hidden');
-            }
-            btn.innerText = "Générer l'Empire";
+            } catch (e) { document.getElementById('error-msg').classList.remove('hidden'); }
+            btn.innerText = "Interroger l'Oracle";
             btn.disabled = false;
         }
     </script>
