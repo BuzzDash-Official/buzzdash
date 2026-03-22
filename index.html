@@ -3,99 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POPCORN STREAM — PREMIUM</title>
+<title>POPCORN STREAM — CINÉMA</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #050608; --surface: #0f1219; --gold: #f5c842; --red: #e8392a; --text: #eaeaea;
-    --muted: #7a8499; --border: rgba(255,255,255,0.06); --sidebar: 240px;
-    --violet: rgba(139, 92, 246, 0.15);
+    --bg: #030405; --surface: #0b0e14; --gold: #f5c842; --text: #eaeaea;
+    --muted: #667085; --border: rgba(255,255,255,0.05); --sidebar: 240px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow: hidden; height: 100vh; }
   
-  body::before {
-    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background: radial-gradient(circle at 30% 30%, var(--violet) 0%, transparent 60%);
-  }
-
-  /* --- TON INTRO D'ORIGINE (LOGO + OEIL CÔTE À CÔTE) --- */
+  /* --- INTRO MASCOTTE (OEIL SUR LE POPCORN) --- */
   #intro {
     position: fixed; inset: 0; z-index: 9999; background: #000;
-    display: flex; align-items: center; justify-content: center;
-    animation: introFade 0.8s ease-in forwards 4.8s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    animation: introFade 0.8s ease-in forwards 5s;
   }
-  .curtain-l,.curtain-r { position:absolute; top:0; width:50%; height:100%; background:#0a0500; z-index:1; }
-  .curtain-l { left:0; transform-origin:left; animation:cL 1.4s forwards .4s; }
-  .curtain-r { right:0; transform-origin:right; animation:cR 1.4s forwards .4s; }
+  .curtain-l, .curtain-r { position:absolute; top:0; width:50%; height:100%; background:#0a0500; z-index:1; }
+  .curtain-l { left:0; transform-origin:left; animation:cL 1.5s forwards .5s; }
+  .curtain-r { right:0; transform-origin:right; animation:cR 1.5s forwards .5s; }
   
-  .intro-content { position:relative; z-index:2; display:flex; align-items:center; gap:25px; opacity:0; animation: logoIn .8s forwards 2s; }
-  .pop-icon { font-size:90px; position:relative; }
-  .eye-icon { font-size:35px; margin-left: -10px; animation: eyeBlink .3s infinite 3s; }
-  .intro-title { font-family:'Bebas Neue'; font-size:70px; color:var(--gold); }
+  .mascot-intro { position:relative; z-index:2; font-size:120px; opacity:0; animation: fadeIn 1s forwards 2s; }
+  .eye-on-pop { position:absolute; font-size:40px; top:55%; left:50%; transform:translate(-50%,-50%); animation: eyeBlink 0.3s infinite 3s; }
+  .title-intro { font-family:'Bebas Neue'; font-size:60px; color:var(--gold); margin-top:20px; opacity:0; animation: fadeIn 1s forwards 2.5s; letter-spacing: 5px; }
 
-  @keyframes logoIn { to { opacity:1; } }
   @keyframes cL { to { transform:scaleX(0); } } @keyframes cR { to { transform:scaleX(0); } }
-  @keyframes eyeBlink { 0%,85%,100% { transform:scaleY(1); } 92% { transform:scaleY(.1); } }
+  @keyframes fadeIn { to { opacity:1; } }
+  @keyframes eyeBlink { 0%,85%,100% { transform:translate(-50%,-50%) scaleY(1); } 92% { transform:translate(-50%,-50%) scaleY(.1); } }
   @keyframes introFade { to { opacity:0; visibility:hidden; } }
 
-  /* --- TRANSITION "TOUDOUM" : OEIL FIXÉ SUR L'EMBALLAGE --- */
-  #transition-load {
+  /* --- CHARGEMENT (LE POPCORN TOURNE SANS GRANDIR) --- */
+  #loader-vid {
     position: fixed; inset: 0; z-index: 8000; background: #000;
     display: none; flex-direction: column; align-items: center; justify-content: center;
   }
-  .loading-pack {
-    position: relative;
-    font-size: 60px;
-    display: flex; align-items: center; justify-content: center;
-    /* Le pop-corn ET l'oeil tournent ensemble */
-    animation: zoomSpin 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-  .eye-on-pack {
-    position: absolute;
-    font-size: 25px;
-    top: 55%; /* Place l'oeil précisément sur l'emballage */
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+  .spin-container { position: relative; animation: spin 1.2s linear infinite; }
+  .pop-loader { font-size: 70px; }
+  .eye-loader { position: absolute; font-size: 25px; top: 55%; left: 50%; transform: translate(-50%, -50%); }
 
-  @keyframes zoomSpin {
-    0% { transform: rotate(0deg) scale(1); opacity: 0; }
-    20% { opacity: 1; }
-    80% { transform: rotate(1080deg) scale(4); }
-    100% { transform: rotate(1080deg) scale(3.5); }
-  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
 
-  /* --- INTERFACE --- */
+  /* --- UI INTERFACE --- */
   #sidebar { position:fixed; left:0; top:0; bottom:0; width:var(--sidebar); background:var(--surface); border-right:1px solid var(--border); z-index:100; padding:25px; }
-  .nav-btn { background:none; border:none; color:var(--muted); width:100%; text-align:left; padding:12px; font-weight:700; cursor:pointer; border-radius:8px; margin-bottom:5px; transition: 0.3s; }
+  .nav-btn { background:none; border:none; color:var(--muted); width:100%; text-align:left; padding:12px; font-weight:700; cursor:pointer; border-radius:8px; margin-bottom:5px; font-size: 14px; }
   .nav-btn.active { background:rgba(245,200,66,0.1); color:var(--gold); }
+  
   #main { position:fixed; left:var(--sidebar); right:0; top:0; bottom:0; overflow-y:auto; padding:80px 40px; }
   .vgrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:25px; }
   .vcard { background:var(--surface); border-radius:12px; overflow:hidden; border:1px solid var(--border); cursor:pointer; transition:0.3s; }
-  .vcard:hover { transform:translateY(-8px); border-color:var(--gold); }
-  
+  .vcard:hover { transform:translateY(-5px); border-color:var(--gold); }
+
+  /* --- MODAL CINÉMA --- */
   #modal { position:fixed; inset:0; background:#000; z-index:9000; display:none; flex-direction: column; align-items:center; justify-content:center; }
   #modal.open { display:flex; }
+  .vision-msg { margin-top: 30px; font-family: 'Bebas Neue'; font-size: 35px; color: var(--gold); letter-spacing: 4px; text-shadow: 0 0 10px var(--gold); }
 </style>
 </head>
 <body>
 
-<div id="transition-load">
-    <div class="loading-pack">
-        🍿
-        <div class="eye-on-pack">👁️</div>
+<div id="loader-vid">
+    <div class="spin-container">
+        <div class="pop-loader">🍿</div>
+        <div class="eye-loader">👁️</div>
     </div>
-    <p id="vision-text" style="font-family:'Bebas Neue'; color:var(--gold); margin-top:160px; font-size:28px; opacity:0; transition:0.5s;">BON VISIONNAGE</p>
+    <div style="font-family:'Bebas Neue'; color:var(--gold); margin-top:40px; font-size:22px;">CHARGEMENT...</div>
 </div>
 
 <div id="intro">
   <div class="curtain-l"></div><div class="curtain-r"></div>
-  <div class="intro-content">
-    <div class="pop-icon">🍿</div>
-    <div class="eye-icon">👁️</div>
-    <div class="intro-title">Popcorn Stream</div>
-  </div>
+  <div class="mascot-intro">🍿<div class="eye-on-pop">👁️</div></div>
+  <div class="title-intro">POPCORN STREAM</div>
 </div>
 
 <aside id="sidebar">
@@ -103,7 +80,6 @@
   <button class="nav-btn active" onclick="displayManual()">🔥 À LA UNE</button>
   <button class="nav-btn" onclick="loadCategory('science')">🔬 SCIENCE (NOZMAN)</button>
   <button class="nav-btn" onclick="loadCategory('trailers')">🎬 BANDES-ANNONCES</button>
-  <button class="nav-btn" onclick="loadCategory('docs')">🌍 DOCUMENTAIRES</button>
 </aside>
 
 <main id="main">
@@ -113,41 +89,29 @@
 </main>
 
 <div id="modal">
-    <button style="position:absolute; top:20px; right:30px; color:#fff; background:none; border:1px solid #fff; padding:8px 20px; border-radius:30px; cursor:pointer; z-index:10;" onclick="closePlayer()">FERMER ✕</button>
+    <button style="position:absolute; top:20px; right:30px; color:#fff; background:none; border:1px solid #fff; padding:8px 20px; border-radius:30px; cursor:pointer;" onclick="closePlayer()">FERMER ✕</button>
     <div style="width:90%; max-width:1100px; aspect-ratio:16/9;">
         <iframe id="player" width="100%" height="100%" src="" frameborder="0" allowfullscreen allow="autoplay"></iframe>
-        <div style="text-align:center; margin-top:20px;">
-            <div style="font-family:'Bebas Neue'; font-size:30px; color:var(--gold);">BON VISIONNAGE</div>
-            <div style="font-size:12px; color:#444;">Diffuseur officiel YouTube</div>
-        </div>
     </div>
+    <div class="vision-msg">BON VISIONNAGE</div>
 </div>
 
 <script>
 const API_KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs';
 
 const CONFIG = {
-  science: { id: 'UCaNlbnghtwlsGF-KzAFThqA', label: 'Dr Nozman', icon: '🔬' },
-  trailers: { id: 'UC_i8X3p8oZNaik8X513Zn1Q', label: 'FilmsActu', icon: '🎬' },
-  docs: { id: 'UCwI-JbGNsojunnHbFAc0M4Q', label: 'Documentaires ARTE', icon: '🌍' }
+  science: { id: 'UCaNlbnghtwlsGF-KzAFThqA', label: 'Dr Nozman' },
+  trailers: { id: 'UC_i8X3p8oZNaik8X513Zn1Q', label: 'Bandes-Annonces' }
 };
 
-const ALUNE = [
-  { id:"O-2u2CscyU0", title:"KAIZEN — Everest" },
-  { id:"p0Z-9Q_jM2Y", title:"Inoxtag — Nouveau Départ" }
-];
-
 function openPlayer(id) {
-    const loader = document.getElementById('transition-load');
-    const vText = document.getElementById('vision-text');
+    const loader = document.getElementById('loader-vid');
     loader.style.display = 'flex';
-    setTimeout(() => { vText.style.opacity = '1'; }, 1000);
     setTimeout(() => {
         document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1`;
         document.getElementById('modal').classList.add('open');
         loader.style.display = 'none';
-        vText.style.opacity = '0';
-    }, 2500);
+    }, 2000);
 }
 
 function closePlayer() {
@@ -155,62 +119,24 @@ function closePlayer() {
     document.getElementById('modal').classList.remove('open');
 }
 
-async function updateVideos(category) {
-    const today = new Date().toDateString();
-    const storageKey = `pop_vids_${category}`;
-    const dateKey = `pop_date_${category}`;
-    let cached = JSON.parse(localStorage.getItem(storageKey)) || [];
-    if (localStorage.getItem(dateKey) === today && cached.length > 0) return cached;
-
-    try {
-        const res = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CONFIG[category].id}&part=snippet,id&order=date&maxResults=10&type=video`);
-        const data = await res.json();
-        if (data.items) {
-            localStorage.setItem(storageKey, JSON.stringify(data.items));
-            localStorage.setItem(dateKey, today);
-            return data.items;
-        }
-    } catch (e) { return cached; }
-}
-
 async function loadCategory(cat) {
     const grid = document.getElementById('grid');
-    const heroZone = document.getElementById('hero-zone');
-    document.getElementById('sec-title').textContent = CONFIG[cat].label.toUpperCase();
-    grid.innerHTML = "<p>Mise à jour...</p>";
-    heroZone.innerHTML = "";
-    const videos = await updateVideos(cat);
-    if (videos) {
+    grid.innerHTML = "<p>Recherche des bobines...</p>";
+    try {
+        const res = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CONFIG[cat].id}&part=snippet,id&order=date&maxResults=10&type=video`);
+        const data = await res.json();
         grid.innerHTML = "";
-        renderHero(videos[0].id.videoId, videos[0].snippet.title, CONFIG[cat].icon);
-        videos.slice(1, 10).forEach(v => {
+        data.items.forEach(v => {
             const id = v.id.videoId;
-            grid.innerHTML += `<div class="vcard" onclick="openPlayer('${id}')"><div style="position:relative; aspect-ratio:16/9;"><img style="width:100%; height:100%; object-fit:cover;" src="https://img.youtube.com/vi/${id}/mqdefault.jpg"></div><div style="padding:15px; font-weight:700; font-size:13px;">${v.snippet.title}</div></div>`;
+            grid.innerHTML += `<div class="vcard" onclick="openPlayer('${id}')"><img style="width:100%" src="https://img.youtube.com/vi/${id}/mqdefault.jpg"><div style="padding:10px; font-size:12px;">${v.snippet.title}</div></div>`;
         });
-    }
-}
-
-function renderHero(id, title, icon='🔥') {
-  document.getElementById('hero-zone').innerHTML = `
-    <div style="position:relative; border-radius:15px; overflow:hidden; aspect-ratio:21/9; cursor:pointer; margin-bottom:40px;" onclick="openPlayer('${id}')">
-      <img src="https://img.youtube.com/vi/${id}/maxresdefault.jpg" style="width:100%; height:100%; object-fit:cover; filter:brightness(0.5);">
-      <div style="position:absolute; bottom:30px; left:30px;">
-        <span style="background:var(--gold); color:black; padding:5px 12px; border-radius:5px; font-weight:bold; font-size:12px;">${icon} RÉCENT</span>
-        <h3 style="font-family:'Bebas Neue'; font-size:45px; margin-top:10px;">${title}</h3>
-      </div>
-    </div>`;
+    } catch(e) { grid.innerHTML = "Erreur de connexion."; }
 }
 
 function displayManual() {
-  document.getElementById('sec-title').textContent = 'À LA UNE';
-  document.getElementById('hero-zone').innerHTML = '';
-  const grid = document.getElementById('grid');
-  grid.innerHTML = "";
-  renderHero(ALUNE[0].id, ALUNE[0].title);
-  ALUNE.slice(1).forEach(v => {
-    grid.innerHTML += `<div class="vcard" onclick="openPlayer('${v.id}')"><div style="position:relative; aspect-ratio:16/9;"><img style="width:100%; height:100%; object-fit:cover;" src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg"></div><div style="padding:15px; font-weight:700; font-size:13px;">${v.title}</div></div>`;
-  });
+    document.getElementById('grid').innerHTML = `<div class="vcard" onclick="openPlayer('O-2u2CscyU0')"><img style="width:100%" src="https://img.youtube.com/vi/O-2u2CscyU0/mqdefault.jpg"><div style="padding:10px;">KAIZEN — Everest</div></div>`;
 }
+
 setTimeout(displayManual, 5500);
 </script>
 </body>
