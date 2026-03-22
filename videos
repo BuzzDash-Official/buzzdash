@@ -27,23 +27,8 @@ const VIDEOS = {
   // ─────────────────────────────────────────────────────────
   alune: [
     {
-      id:    "O-2u2CscyU0",
+      id:    "ygUGa2FpemVu",
       titre: "KAIZEN — 1 an pour gravir l'Everest",
-      date:  "2024",
-    },
-    {
-      id:    "p0Z-9Q_jM2Y",
-      titre: "Inoxtag : Nouveau Départ",
-      date:  "2024",
-    },
-    {
-      id:    "PCMrUGqH6fQ",
-      titre: "La face cachée des océans",
-      date:  "2024",
-    },
-    {
-      id:    "7Xfk9CN6S4E",
-      titre: "L'univers en 1 heure",
       date:  "2024",
     },
     // ← Ajoute d'autres vidéos "à la une" ici
@@ -92,7 +77,7 @@ const VIDEOS = {
   // ── 🎬 BANDES-ANNONCES ────────────────────────────────────
   bandesannonces: [
     {
-      id:    "sSB_PxmAb2s",
+      id:    "-hS61q5GcHM",
       titre: "Bande-annonce exemple",
       date:  "2025",
     },
