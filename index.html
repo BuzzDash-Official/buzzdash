@@ -3,138 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FLUX DE POP-CORN</title>
+<title>FLUX DE POP-CORN — PREMIUM</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #050608; --surface: #0f1219; --gold: #c5a059; --text: #eaeaea;
-    --sidebar: 240px; --border: rgba(255,255,255,0.05);
+    --bg: #050608; --surface: #0f1219; --gold: #f5c842; --text: #eaeaea;
+    --muted: #7a8499; --border: rgba(255,255,255,0.06); --sidebar: 260px;
+    --accent: rgba(139, 92, 246, 0.15);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow: hidden; height: 100vh; }
+  
+  /* L'EFFET DE LUMIÈRE D'AMBIANCE */
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(circle at 20% 20%, var(--accent) 0%, transparent 50%);
+  }
 
-  /* --- INTRO ORIGINALE (IMAGE 2) --- */
+  /* --- INTRO MASCOTTE ORIGINALE --- */
   #intro {
     position: fixed; inset: 0; z-index: 9999; background: #000;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     animation: introFade 0.8s ease-in forwards 5s;
   }
-  .mascot-intro { position: relative; font-size: 100px; margin-bottom: 20px; }
-  .eye-intro { position: absolute; font-size: 35px; top: 55%; left: 50%; transform: translate(-50%, -50%); animation: blink 0.3s infinite 3s; }
-  .intro-title { font-family: 'Bebas Neue'; font-size: 80px; color: var(--gold); letter-spacing: 5px; }
+  .mascot-box { position: relative; font-size: 110px; margin-bottom: 20px; }
+  .eye-blink { position: absolute; font-size: 38px; top: 55%; left: 50%; transform: translate(-50%, -50%); animation: eyeBlink 0.3s infinite 3s; }
+  .intro-text { font-family: 'Bebas Neue'; font-size: 85px; color: var(--gold); letter-spacing: 6px; }
 
-  @keyframes blink { 0%, 85%, 100% { transform: translate(-50%, -50%) scaleY(1); } 92% { transform: translate(-50%, -50%) scaleY(0.1); } }
+  @keyframes eyeBlink { 0%, 85%, 100% { transform: translate(-50%, -50%) scaleY(1); } 92% { transform: translate(-50%, -50%) scaleY(0.1); } }
   @keyframes introFade { to { opacity: 0; visibility: hidden; } }
 
-  /* --- CHARGEMENT VIDÉO (TOURNE SEULEMENT) --- */
+  /* --- CHARGEMENT (LE POPCORN QUI TOURNE) --- */
   #loader {
-    position: fixed; inset: 0; z-index: 8000; background: #000;
+    position: fixed; inset: 0; z-index: 8000; background: rgba(0,0,0,0.9);
     display: none; flex-direction: column; align-items: center; justify-content: center;
   }
-  .spin-box { position: relative; animation: spin 1s linear infinite; }
+  .spin-pop { position: relative; font-size: 60px; animation: spin 1.2s linear infinite; }
   @keyframes spin { 100% { transform: rotate(360deg); } }
 
-  /* --- LAYOUT (IMAGE 3) --- */
-  #sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar); background: #0a0b0e; border-right: 1px solid var(--border); padding: 20px; z-index: 100; }
-  .logo-side { color: var(--gold); font-family: 'Bebas Neue'; font-size: 22px; display: flex; align-items: center; gap: 10px; margin-bottom: 40px; }
-  
-  .nav-btn { background: none; border: none; color: #7a8499; width: 100%; text-align: left; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 6px; font-size: 13px; text-transform: uppercase; margin-bottom: 5px; }
-  .nav-btn.active { background: rgba(197, 160, 89, 0.15); color: var(--gold); }
+  /* --- SIDEBAR --- */
+  #sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar); background: #08090b; border-right: 1px solid var(--border); padding: 30px 20px; z-index: 100; }
+  .logo-side { font-family: 'Bebas Neue'; color: var(--gold); font-size: 24px; margin-bottom: 40px; }
+  .nav-group { margin-bottom: 30px; }
+  .nav-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; }
+  .nav-btn { background: none; border: none; color: var(--muted); width: 100%; text-align: left; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; }
+  .nav-btn:hover, .nav-btn.active { background: rgba(245,200,66,0.1); color: var(--gold); }
 
-  #main { position: fixed; left: var(--sidebar); right: 0; top: 0; bottom: 0; overflow-y: auto; padding: 60px 40px; }
-  .section-title { font-family: 'Bebas Neue'; font-size: 40px; margin-bottom: 30px; letter-spacing: 2px; }
+  /* --- MAIN CONTENT --- */
+  #main { position: fixed; left: var(--sidebar); right: 0; top: 0; bottom: 0; overflow-y: auto; padding-bottom: 100px; }
   
-  .vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-  .vcard { background: #161a23; border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; border: 1px solid var(--border); }
-  .vcard:hover { border-color: var(--gold); transform: translateY(-5px); }
-  .thumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #222; }
-  .vinfo { padding: 15px; font-weight: bold; font-size: 14px; line-height: 1.4; }
+  /* BARRE DE RECHERCHE REVENUE */
+  .top-bar { padding: 20px 40px; display: flex; justify-content: flex-end; position: sticky; top: 0; background: rgba(5,6,8,0.8); backdrop-filter: blur(10px); z-index: 50; }
+  .search-box { background: var(--surface); border: 1px solid var(--border); border-radius: 30px; padding: 10px 20px; width: 300px; display: flex; align-items: center; }
+  .search-box input { background: none; border: none; color: #fff; width: 100%; outline: none; margin-left: 10px; }
 
-  /* --- PLAYER --- */
-  #modal { position: fixed; inset: 0; background: #000; z-index: 9000; display: none; align-items: center; justify-content: center; flex-direction: column; }
+  /* HERO BANNER REVENU */
+  #hero-zone { padding: 0 40px 40px 40px; }
+  .hero-card { position: relative; border-radius: 20px; overflow: hidden; aspect-ratio: 21/9; cursor: pointer; border: 1px solid var(--border); }
+  .hero-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+  .hero-content { position: absolute; bottom: 40px; left: 40px; }
+  
+  .content-zone { padding: 0 40px; }
+  .vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+  .vcard { background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: 0.3s; }
+  .vcard:hover { transform: translateY(-10px); border-color: var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  .vthumb { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+  .vtitle { padding: 15px; font-weight: bold; font-size: 14px; line-height: 1.4; }
+
+  /* PLAYER */
+  #modal { position: fixed; inset: 0; background: #000; z-index: 9000; display: none; flex-direction: column; align-items: center; justify-content: center; }
   #modal.open { display: flex; }
 </style>
 </head>
 <body>
 
 <div id="intro">
-  <div class="mascot-intro">🍿<div class="eye-intro">👁️</div></div>
-  <div class="intro-title">FLUX DE POP-CORN</div>
+  <div class="mascot-box">🍿<div class="eye-blink">👁️</div></div>
+  <div class="intro-text">FLUX DE POP-CORN</div>
 </div>
 
 <div id="loader">
-    <div class="spin-box" style="font-size: 60px;">🍿<div style="position:absolute; font-size:20px; top:55%; left:50%; transform:translate(-50%, -50%);">👁️</div></div>
+  <div class="spin-pop">🍿</div>
 </div>
 
 <aside id="sidebar">
   <div class="logo-side">🍿 FLUX DE POP-CORN</div>
-  <button class="nav-btn active" onclick="showHome()">🔥 À LA UNE</button>
-  <button class="nav-btn" onclick="loadCat('science')">🔬 SCIENCE (NOZMAN)</button>
-  <button class="nav-btn" onclick="loadCat('trailers')">🎬 BANDES-ANNONCES</button>
+  <div class="nav-group">
+    <span class="nav-label">Menu</span>
+    <button class="nav-btn active" onclick="loadCat('home')">🔥 À LA UNE</button>
+    <button class="nav-btn" onclick="loadCat('science')">🔬 SCIENCE (NOZMAN)</button>
+    <button class="nav-btn" onclick="loadCat('films')">🎬 FILMS</button>
+    <button class="nav-btn" onclick="loadCat('jeux')">🎮 JEUX VIDÉO</button>
+  </div>
 </aside>
 
 <main id="main">
-  <h2 class="section-title" id="stitle">À LA UNE</h2>
-  <div class="vgrid" id="grid"></div>
+  <div class="top-bar">
+    <div class="search-box">🔍 <input type="text" placeholder="Rechercher une vidéo..."></div>
+  </div>
+  
+  <div id="hero-zone"></div>
+  
+  <div class="content-zone">
+    <h2 id="stitle" style="font-family:'Bebas Neue'; font-size:40px; margin-bottom:25px;">À LA UNE</h2>
+    <div class="vgrid" id="grid"></div>
+  </div>
 </main>
 
 <div id="modal">
-    <button style="position:absolute; top:20px; right:30px; color:#fff; background:none; border:1px solid #fff; padding:8px 20px; border-radius:20px; cursor:pointer;" onclick="closeP()">FERMER ✕</button>
-    <iframe id="player" width="85%" height="80%" src="" frameborder="0" allowfullscreen allow="autoplay"></iframe>
-    <div style="color:var(--gold); font-family:'Bebas Neue'; font-size:30px; margin-top:20px;">BON VISIONNAGE</div>
+  <button style="position:absolute; top:30px; right:30px; color:#fff; background:none; border:1px solid #fff; padding:10px 25px; border-radius:30px; cursor:pointer;" onclick="closeP()">FERMER ✕</button>
+  <iframe id="player" width="90%" height="80%" src="" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+  <div style="font-family:'Bebas Neue'; color:var(--gold); font-size:35px; margin-top:20px;">BON VISIONNAGE</div>
 </div>
 
 <script>
 const API_KEY = 'AIzaSyDXc2iuxIR4TXYr53Co43RHVii2Tc7FLgs';
-const CHANNELS = {
-  science: 'UCaNlbnghtwlsGF-KzAFThqA',
-  trailers: 'UC_i8X3p8oZNaik8X513Zn1Q'
+const CONFIG = {
+  science: 'UCaNlbnghtwlsGF-KzAFThqA', // LE VRAI DR NOZMAN
+  films: 'UC_i8X3p8oZNaik8X513Zn1Q',
+  jeux: 'UC0MId_C98000' // ID générique pour le test
 };
 
 function openP(id) {
-    const l = document.getElementById('loader');
-    l.style.display = 'flex';
-    setTimeout(() => {
-        document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-        document.getElementById('modal').classList.add('open');
-        l.style.display = 'none';
-    }, 1500);
+  const l = document.getElementById('loader');
+  l.style.display = 'flex';
+  setTimeout(() => {
+    document.getElementById('player').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+    document.getElementById('modal').classList.add('open');
+    l.style.display = 'none';
+  }, 1800);
 }
 
 function closeP() {
-    document.getElementById('player').src = "";
-    document.getElementById('modal').classList.remove('open');
+  document.getElementById('player').src = "";
+  document.getElementById('modal').classList.remove('open');
 }
 
 async function loadCat(key) {
-    const g = document.getElementById('grid');
-    document.getElementById('stitle').innerText = key === 'science' ? 'SCIENCE (NOZMAN)' : 'BANDES-ANNONCES';
-    g.innerHTML = "<p>Chargement...</p>";
+  const g = document.getElementById('grid');
+  const hz = document.getElementById('hero-zone');
+  document.getElementById('stitle').innerText = key.toUpperCase();
+  
+  if(key === 'home') {
+    hz.innerHTML = `<div class="hero-card" onclick="openP('O-2u2CscyU0')"><img class="hero-img" src="https://i.ytimg.com/vi/O-2u2CscyU0/maxresdefault.jpg"><div class="hero-content"><span style="background:var(--gold); color:black; padding:5px 10px; border-radius:5px; font-weight:bold;">À NE PAS MANQUER</span><h1 style="font-family:'Bebas Neue'; font-size:60px;">KAIZEN — Everest</h1></div></div>`;
+    g.innerHTML = `<div class="vcard" onclick="openP('p0Z-9Q_jM2Y')"><img class="vthumb" src="https://i.ytimg.com/vi/p0Z-9Q_jM2Y/mqdefault.jpg"><div class="vtitle">Inoxtag — Nouveau Départ</div></div>`;
+    return;
+  }
+
+  g.innerHTML = "<p>Mise au point de l'objectif...</p>";
+  try {
+    const res = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CONFIG[key]}&part=snippet,id&order=date&maxResults=10&type=video`);
+    const data = await res.json();
+    hz.innerHTML = "";
+    g.innerHTML = "";
     
-    try {
-        const r = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNELS[key]}&part=snippet,id&order=date&maxResults=9&type=video`);
-        const d = await r.json();
-        g.innerHTML = "";
-        d.items.forEach(v => {
-            g.innerHTML += `<div class="vcard" onclick="openP('${v.id.videoId}')">
-                <img class="thumb" src="https://i.ytimg.com/vi/${v.id.videoId}/mqdefault.jpg">
-                <div class="vinfo">${v.snippet.title}</div>
-            </div>`;
-        });
-    } catch(e) { g.innerHTML = "Erreur quota ou clé."; }
+    // RENDER HERO (Dernière vidéo en gros)
+    const top = data.items[0];
+    hz.innerHTML = `<div class="hero-card" onclick="openP('${top.id.videoId}')"><img class="hero-img" src="https://i.ytimg.com/vi/${top.id.videoId}/maxresdefault.jpg"><div class="hero-content"><span style="background:var(--gold); color:black; padding:5px 10px; border-radius:5px; font-weight:bold;">DERNIÈRE SORTIE</span><h1 style="font-family:'Bebas Neue'; font-size:60px;">${top.snippet.title}</h1></div></div>`;
+    
+    // RENDER GRID
+    data.items.slice(1).forEach(v => {
+      g.innerHTML += `<div class="vcard" onclick="openP('${v.id.videoId}')"><img class="vthumb" src="https://i.ytimg.com/vi/${v.id.videoId}/mqdefault.jpg"><div class="vtitle">${v.snippet.title}</div></div>`;
+    });
+  } catch(e) { g.innerHTML = "Erreur de quota."; }
 }
 
-function showHome() {
-    document.getElementById('stitle').innerText = 'À LA UNE';
-    document.getElementById('grid').innerHTML = `
-        <div class="vcard" onclick="openP('O-2u2CscyU0')">
-            <img class="thumb" src="https://i.ytimg.com/vi/O-2u2CscyU0/mqdefault.jpg">
-            <div class="vinfo">KAIZEN — Everest</div>
-        </div>
-    `;
-}
-
-setTimeout(showHome, 5500);
+setTimeout(() => loadCat('home'), 5500);
 </script>
 </body>
 </html>
