@@ -2,56 +2,92 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE CIRCLE | MonEmpireAuto</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #050505; color: #d4af37; font-family: 'Cinzel', serif; }
-        .glass { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(212, 175, 55, 0.2); backdrop-filter: blur(10px); }
-        .gold-text { background: linear-gradient(to right, #d4af37, #fcf6ba); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        body { background-color: #050505; color: #d4af37; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .ancient { font-family: 'Cinzel', serif; }
+        .glass { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.2); backdrop-filter: blur(15px); }
+        .gold-text { background: linear-gradient(to right, #d4af37, #fcf6ba, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .pyramid { font-size: 50px; filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5)); animation: pulse 3s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-    <div class="text-6xl mb-4 animate-pulse">👁️</div>
-    <h1 class="text-xs tracking-[0.5em] text-gray-500 mb-2">MONEMPIREAUTO</h1>
-    <h2 class="text-4xl font-bold gold-text mb-12">L'ORACLE DU PROFIT</h2>
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="pyramid mb-6">👁️</div>
+    <h1 class="ancient text-[10px] tracking-[0.6em] text-gray-600 mb-2">PRIVATE NETWORK</h1>
+    <h2 class="ancient text-4xl font-black gold-text mb-12 tracking-tighter">L'ORACLE DU PROFIT</h2>
     
-    <div class="w-full max-w-xl glass p-2 rounded-full flex shadow-2xl">
-        <input id="input" class="bg-transparent flex-1 p-4 outline-none text-white placeholder-gray-700" placeholder="Décrivez votre situation...">
-        <button onclick="interroger()" id="btn" class="bg-[#d4af37] text-black px-10 py-4 rounded-full font-black uppercase text-xs hover:bg-white transition-all">Interroger</button>
+    <div class="w-full max-w-xl glass p-2 rounded-full flex shadow-2xl transition-all focus-within:border-amber-500">
+        <input id="input" class="bg-transparent flex-1 p-4 outline-none text-white placeholder-gray-800 font-light" placeholder="Décrivez vos moyens (ex: 0€, 2h/jour)...">
+        <button onclick="interroger()" id="btn" class="bg-[#d4af37] text-black px-10 py-4 rounded-full font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all">Interroger</button>
     </div>
 
-    <div id="resultat" class="hidden mt-12 w-full max-w-xl p-8 glass rounded-3xl text-left animate-fade-in">
-        <h3 id="biz-name" class="text-2xl font-bold gold-text mb-4"></h3>
-        <p id="plan" class="text-gray-400 italic mb-6"></p>
-        <div class="text-sm tracking-widest text-gray-500 uppercase">Gain estimé : <span id="cash" class="text-green-500 font-bold"></span></div>
+    <div id="resultat" class="hidden mt-12 w-full max-w-xl p-10 glass rounded-[2rem] text-left animate-fade-in relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-amber-600"></div>
+        <h3 id="biz-name" class="ancient text-2xl font-bold gold-text mb-4 tracking-wide"></h3>
+        <p id="plan" class="text-gray-400 font-light leading-relaxed mb-8 italic text-lg"></p>
+        <div class="flex justify-between items-end">
+            <div class="text-[10px] tracking-widest text-gray-600 uppercase">Estimation Mensuelle</div>
+            <div id="cash" class="ancient text-3xl font-bold text-white"></div>
+        </div>
     </div>
 
     <script>
         async function interroger() {
-            const input = document.getElementById('input').value;
+            const prompt = document.getElementById('input').value;
             const btn = document.getElementById('btn');
-            if(!input) return;
+            const resDiv = document.getElementById('resultat');
+
+            // ⚠️ REMPLACE LE TEXTE CI-DESSOUS PAR TA CLÉ GSK_...
+            const key = "GROQ_API_KEY"; 
+
+            if(!prompt || key === "TA_CLE_GROQ_ICI") {
+                alert("Erreur : La clé secrète de l'Oracle n'est pas configurée.");
+                return;
+            }
             
-            btn.innerText = "ANALYSE...";
+            btn.innerText = "COMMUNICATION...";
+            btn.disabled = true;
+
             try {
-                // On utilise Groq directement pour le test
                 const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST",
-                    headers: { "Authorization": "Bearer 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", "Content-Type": "application/json" },
+                    headers: { 
+                        "Authorization": `Bearer ${key}`, 
+                        "Content-Type": "application/json" 
+                    },
                     body: JSON.stringify({
                         model: "llama3-8b-8192",
-                        messages: [{ role: "system", content: "Expert business. Réponds en JSON: {\"n\":\"Nom du Biz\",\"p\":\"Plan en 2 lignes\",\"c\":\"€€€/mois\"}" }, { role: "user", content: input }],
+                        messages: [
+                            { role: "system", content: "Tu es l'Oracle. Réponds en JSON uniquement : {\"n\":\"Nom du business\",\"p\":\"Plan d'action secret en 2 phrases\",\"c\":\"Montant en €\"}" },
+                            { role: "user", content: prompt }
+                        ],
                         response_format: { type: "json_object" }
                     })
                 });
+
+                if (!response.ok) throw new Error();
+
                 const data = await response.json();
                 const res = JSON.parse(data.choices[0].message.content);
+
                 document.getElementById('biz-name').innerText = res.n;
                 document.getElementById('plan').innerText = res.p;
-                document.getElementById('cash').innerText = res.c;
-                document.getElementById('resultat').classList.remove('hidden');
-            } catch (e) { alert("Erreur d'accès à l'Oracle."); }
-            btn.innerText = "Interroger";
+                document.getElementById('cash').innerText = res.c + " / MOIS";
+                
+                resDiv.classList.remove('hidden');
+                resDiv.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (e) {
+                alert("L'accès à l'Oracle a été refusé. Vérifiez votre connexion au réseau secret.");
+            } finally {
+                btn.innerText = "Interroger";
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
