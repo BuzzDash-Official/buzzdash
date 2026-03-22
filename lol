@@ -31,9 +31,9 @@ jobs:
 
           CHAINES = {
               "documentaires":   "UCwI-JbGNsojunnHbFAc0M4Q",  # ARTE
-              "science":         "UCaNlbnghtwlsGF-KzAFThqA",  # Science Etonnante
+              "science":         "@DrNozman",  # Science Etonnante
               "espace":          "UC5X4e8ScZI2AFd_vkjSoyoQ",  # AstronoGeek
-              "bandesannonces":  "UC_i8X3p8oZNaik8X513Zn1Q",  # FilmsActu
+              "bandesannonces":  "@SonyPicturesFr",  # FilmsActu
               "culture":         "UCqnbDFdCpuN8CMEg0VuEBqA",  # Nota Bene
           }
 
