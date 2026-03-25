@@ -1,82 +1,75 @@
-"use client";
-import { useState, useEffect } from 'react';
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popcorn Creator | Cockpit Élite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #050505; color: white; font-family: sans-serif; }
+        .gold-gradient { background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%); }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-6">
 
-export default function PopcornCreator() {
-  const [loading, setLoading] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [url, setUrl] = useState('');
+    <div class="absolute top-10 tracking-[0.3em] font-bold text-yellow-500">POPCORN CREATOR</div>
 
-  const handleAnalyze = () => {
-    if(!url) return alert("Colle un lien YouTube d'abord !");
-    setLoading(true);
-    // On simule un calcul de 2 secondes pour faire "vrai"
-    setTimeout(() => {
-      setLoading(false);
-      setShowResults(true);
-    }, 2500);
-  };
-
-  return (
-    <div style={{ backgroundColor: '#050505', color: '#fff', minHeight: '100vh', fontFamily: 'Inter, sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-      
-      {/* LOGO LUXE */}
-      <div style={{ position: 'absolute', top: '40px', letterSpacing: '4px', fontWeight: 'bold', fontSize: '1.2rem', color: '#FFD700' }}>
-        POPCORN CREATOR <span style={{ color: '#fff', fontSize: '0.8rem', opacity: 0.5 }}>v1.0</span>
-      </div>
-
-      <div style={{ maxWidth: '600px', width: '100%', textAlign: 'center' }}>
-        {!showResults ? (
-          <>
-            <h1 style={{ fontSize: '3.5rem', marginBottom: '10px', fontWeight: '800', lineHeight: '1.1' }}>Pilotez votre <br/><span style={{ color: '#FFD700' }}>Audience.</span></h1>
-            <p style={{ color: '#888', marginBottom: '40px', fontSize: '1.1rem' }}>L'outil de maîtrise pour les créateurs qui visent les 100k.</p>
+    <div id="main-card" class="max-w-xl w-full text-center">
+        <div id="step-1">
+            <h1 class="text-5xl font-black mb-4 leading-tight">Pilotez votre <br><span class="text-yellow-500">Audience.</span></h1>
+            <p class="text-gray-400 mb-10 text-lg">L'outil de maîtrise pour les créateurs qui visent les 100k.</p>
             
-            <div style={{ background: '#111', padding: '30px', borderRadius: '24px', border: '1px solid #222', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}>
-              <input 
-                type="text" 
-                placeholder="Collez le lien de votre vidéo ici..." 
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                style={{ width: '100%', padding: '18px', borderRadius: '12px', background: '#000', border: '1px solid #333', color: '#fff', marginBottom: '20px', fontSize: '1rem', outline: 'none' }}
-              />
-              <button 
-                onClick={handleAnalyze}
-                disabled={loading}
-                style={{ width: '100%', padding: '18px', backgroundColor: loading ? '#333' : '#FFD700', color: '#000', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem', transition: 'all 0.3s' }}
-              >
-                {loading ? "INITIALISATION DE L'IA..." : "ACTIVER LE COCKPIT"}
-              </button>
+            <div class="bg-[#111] p-8 rounded-[30px] border border-[#222] shadow-2xl">
+                <input type="text" id="yt-url" placeholder="Collez votre lien YouTube ici..." 
+                    class="w-full p-4 rounded-xl bg-black border border-[#333] text-white mb-6 outline-none focus:border-yellow-500 transition-all">
+                
+                <button onclick="startAnalysis()" class="w-full p-4 gold-gradient text-black font-bold rounded-xl hover:scale-[1.02] transition-transform">
+                    ACTIVER LE COCKPIT
+                </button>
             </div>
-          </>
-        ) : (
-          <div style={{ background: '#111', padding: '40px', borderRadius: '30px', border: '1px solid #333', textAlign: 'left', animation: 'fadeIn 0.5s ease-in' }}>
-            <h2 style={{ color: '#FFD700', marginBottom: '20px' }}>📊 Analyse de Maîtrise Terminée</h2>
+        </div>
+
+        <div id="loading" class="hidden">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-yellow-500 mx-auto mb-4"></div>
+            <p class="text-yellow-500 font-bold tracking-widest">ANALYSE IA EN COURS...</p>
+        </div>
+
+        <div id="step-2" class="hidden bg-[#111] p-10 rounded-[40px] border border-[#333] text-left">
+            <h2 class="text-yellow-500 text-2xl font-bold mb-6">Rapport de Maîtrise 📊</h2>
             
-            <div style={{ display: 'grid', gap: '15px' }}>
-              <div style={{ background: '#1a1a1a', padding: '15px', borderRadius: '12px', borderLeft: '4px solid #FFD700' }}>
-                <strong>🚀 Potentiel Viral :</strong> <span style={{color:'#00ff00'}}>Élevé (84%)</span>
-              </div>
-              <div style={{ background: '#1a1a1a', padding: '15px', borderRadius: '12px', borderLeft: '4px solid #FFD700' }}>
-                <strong>💡 Conseil Titre :</strong> Votre accroche manque de "négativité". Ajoutez une peur ou un secret.
-              </div>
-              <div style={{ background: '#1a1a1a', padding: '15px', borderRadius: '12px', borderLeft: '4px solid #FF3333' }}>
-                <strong>⚠️ Alerte Rétention :</strong> Chute prévue à 0:45. Votre intro est trop longue.
-              </div>
+            <div class="space-y-4 mb-8">
+                <div class="bg-[#1a1a1a] p-4 rounded-xl border-l-4 border-green-500">
+                    <p class="text-sm text-gray-400">POTENTIEL VIRAL</p>
+                    <p class="font-bold">Élevé (84%) - Structure validée.</p>
+                </div>
+                <div class="bg-[#1a1a1a] p-4 rounded-xl border-l-4 border-yellow-500">
+                    <p class="text-sm text-gray-400">CONSEIL STRATÉGIQUE</p>
+                    <p class="font-bold">Votre accroche manque de "mystère".</p>
+                </div>
             </div>
 
-            <div style={{ marginTop: '40px', padding: '25px', background: '#FFD700', color: '#000', borderRadius: '20px', textAlign: 'center' }}>
-              <p style={{ margin: '0 0 15px 0', fontWeight: 'bold' }}>Voulez-vous le plan d'action complet pour atteindre les 50k € ?</p>
-              <a href="https://popcorn-creator.lemonsqueezy.com" style={{ display: 'inline-block', padding: '12px 25px', background: '#000', color: '#fff', textDecoration: 'none', borderRadius: '10px', fontWeight: 'bold' }}>
-                DÉBLOQUER L'ACCÈS MEMBRE (49€)
-              </a>
+            <div class="bg-yellow-500 p-6 rounded-2xl text-black text-center">
+                <p class="font-bold mb-4">Voulez-vous le plan complet vers les 50k € ?</p>
+                <a href="https://popcorn-creator.lemonsqueezy.com" class="inline-block bg-black text-white px-8 py-3 rounded-full font-bold">
+                    DEVENIR MEMBRE (49€)
+                </a>
             </div>
-            <button onClick={() => setShowResults(false)} style={{ background: 'none', border: 'none', color: '#555', marginTop: '20px', cursor: 'pointer', width: '100%' }}>Nouvelle analyse</button>
-          </div>
-        )}
-      </div>
-
-      <style jsx>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-      `}</style>
+        </div>
     </div>
-  );
-}
+
+    <script>
+        function startAnalysis() {
+            const url = document.getElementById('yt-url').value;
+            if (!url) return alert("Mettez un lien !");
+            
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('step-2').classList.remove('hidden');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
